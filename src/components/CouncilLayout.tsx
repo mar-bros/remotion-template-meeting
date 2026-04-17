@@ -8,18 +8,15 @@ import { Avatar } from "./Avatar";
 interface CouncilLayoutProps {
   speaker?: ProtocolType;
   title?: string;
-  speakingFrameMap: Record<string, number[]>;
-  startFrame: number;
+  prevSpeakingFrames: Record<string, number>;
 }
 
 export const CouncilLayout: React.FC<CouncilLayoutProps> = ({
   speaker,
   title = "逻辑会审",
-  speakingFrameMap,
-  startFrame
+  prevSpeakingFrames
 }) => {
-  const localFrame = useCurrentFrame();
-  const frame = localFrame + startFrame;
+  const frame = useCurrentFrame();
   const { s, isVertical } = useScale();
 
   const cols = isVertical ? 2 : 3;
@@ -64,7 +61,7 @@ export const CouncilLayout: React.FC<CouncilLayoutProps> = ({
               <Avatar
                 protocol={p}
                 isSpeaking={speaker === p}
-                speakingFrame={speakingFrameMap[p][frame] || 0}
+                speakingFrame={prevSpeakingFrames[p] + (speaker === p ? frame : 0)}
               />
             </div>
           ))}

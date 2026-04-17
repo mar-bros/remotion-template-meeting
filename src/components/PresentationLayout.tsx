@@ -11,8 +11,7 @@ interface PresentationLayoutProps {
   contentType?: "image" | "video";
   videoStartTime?: number; // In frames
   title?: string;
-  speakingFrameMap: Record<string, number[]>;
-  startFrame: number;
+  prevSpeakingFrames: Record<string, number>;
 }
 
 export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
@@ -21,11 +20,9 @@ export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
   contentType = "image",
   videoStartTime = 0,
   title = "逻辑会审",
-  speakingFrameMap,
-  startFrame
+  prevSpeakingFrames
 }) => {
-  const localFrame = useCurrentFrame();
-  const frame = localFrame + startFrame;
+  const frame = useCurrentFrame();
   const { s, isVertical, width, height } = useScale();
 
   const gap = s(20);
@@ -109,7 +106,7 @@ export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
                 <Avatar
                   protocol={p}
                   isSpeaking={speaker === p}
-                  speakingFrame={speakingFrameMap[p][frame] || 0}
+                  speakingFrame={prevSpeakingFrames[p] + (speaker === p ? frame : 0)}
                   isSmall={true}
                 />
               </div>

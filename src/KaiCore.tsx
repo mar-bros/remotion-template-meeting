@@ -23,38 +23,25 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
   const { width, height } = useVideoConfig();
   const isVertical = height > width;
 
-  // Pre-calculate cumulative speaking frames for each protocol
-  const speakingFrameMap = React.useMemo(() => {
+  // Pre-calculate cumulative frames spoken by each protocol before each scene
+  const sceneStats = React.useMemo(() => {
     const protocols: ProtocolType[] = ["blue", "white", "red", "black", "yellow", "green"];
-    const totalDuration = scenes.reduce((sum, s) => sum + s.durationInFrames, 0);
+    const cumulative: Record<string, number>[] = [];
     
-    // Initialize maps
-    const map: Record<string, number[]> = {};
-    protocols.forEach(p => map[p] = new Array(totalDuration).fill(0));
-    
-    const currentCounters: Record<string, number> = {};
-    protocols.forEach(p => currentCounters[p] = 0);
-    
-    let currentGlobalFrame = 0;
+    let currentTotals: Record<string, number> = {};
+    protocols.forEach(p => currentTotals[p] = 0);
     
     scenes.forEach(scene => {
-      for (let f = 0; f < scene.durationInFrames; f++) {
-        // Record current counts for all protocols at this global frame
-        protocols.forEach(p => {
-          map[p][currentGlobalFrame] = currentCounters[p];
-        });
-        
-        // Increment the counter for the active speaker AFTER recording
-        // so that the first frame of speaking is frame 0 of the video
-        if (scene.speaker) {
-          currentCounters[scene.speaker]++;
-        }
-        
-        currentGlobalFrame++;
+      // Record status at start of scene
+      cumulative.push({ ...currentTotals });
+      
+      // Update totals for next scene
+      if (scene.speaker) {
+        currentTotals[scene.speaker] += scene.durationInFrames;
       }
     });
     
-    return map;
+    return cumulative;
   }, [scenes]);
 
   // Asset continuity logic:
@@ -89,25 +76,23 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
       {/* Main Orchestrator via Series */}
       <Series>
         {scenes.map((scene, index) => {
-          const sequenceStartFrame = scenes.slice(0, index).reduce((acc, s) => acc + s.durationInFrames, 0);
+          const videoStartTime = getVideoStartTime(index);
           return (
             <Series.Sequence key={index} durationInFrames={scene.durationInFrames}>
               {scene.mode === "council" ? (
                 <CouncilLayout 
                   speaker={scene.speaker} 
                   title={title} 
-                  speakingFrameMap={speakingFrameMap}
-                  startFrame={sequenceStartFrame}
+                  prevSpeakingFrames={sceneStats[index]}
                 />
               ) : (
                 <PresentationLayout 
                   speaker={scene.speaker} 
                   contentUrl={scene.contentUrl} 
                   contentType={scene.contentType}
-                  videoStartTime={getVideoStartTime(index)}
+                  videoStartTime={videoStartTime}
                   title={title}
-                  speakingFrameMap={speakingFrameMap}
-                  startFrame={sequenceStartFrame}
+                  prevSpeakingFrames={sceneStats[index]}
                 />
               )}
             </Series.Sequence>

@@ -24,7 +24,7 @@ export const sampleScript: Scene[] = [
   },
   {
     mode: "presentation",
-    speaker: "red",
+    speaker: "green",
     text: "但对于失去至亲的人来说，哪怕是代码里的一个拥抱，也是一种慈悲。",
     durationInFrames: 180,
     contentUrl: staticFile("/share-desktop.png"),

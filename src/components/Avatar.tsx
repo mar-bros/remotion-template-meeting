@@ -1,4 +1,4 @@
-import { Img, OffthreadVideo, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { Freeze, Img, Video, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { useScale } from "../hooks/useScale";
 import { PROTOCOLS, ProtocolType } from "../tokens";
 
@@ -19,12 +19,18 @@ export const Avatar: React.FC<AvatarProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { s } = useScale();
+  const { fps } = useVideoConfig();
   const data = PROTOCOLS[protocol];
 
   // Detect asset type
   const isVideo = data.avatar.toLowerCase().endsWith(".mp4") || 
                   data.avatar.toLowerCase().endsWith(".webm") || 
                   data.avatar.toLowerCase().endsWith(".mov");
+
+  // Calculate the base offset: how many frames this character spoke
+  // BEFORE the current Series.Sequence started.
+  // speakingFrame = base + (isSpeaking ? frame : 0), so base = speakingFrame - (isSpeaking ? frame : 0)
+  const videoTrimBase = isSpeaking ? speakingFrame - frame : speakingFrame;
 
   // Pulsing border animation
   const pulseScale = isSpeaking 
@@ -40,6 +46,8 @@ export const Avatar: React.FC<AvatarProps> = ({
   const glitchTransform = glitchActive
     ? `translate(${(Math.sin(frame) * s(5))}px, ${(Math.cos(frame) * s(5))}px)`
     : "none";
+
+  const videoStyle = { width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" as const };
 
   return (
     <div style={{ 
@@ -69,13 +77,31 @@ export const Avatar: React.FC<AvatarProps> = ({
         flexShrink: 0
       }}>
         {isVideo ? (
-          <OffthreadVideo
-            src={data.avatar}
-            muted
-            // Precise frame driving
-            frame={speakingFrame}
-            style={{ width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" }}
-          />
+          isSpeaking ? (
+            // SPEAKING: Let Video play naturally — no Freeze, no per-frame seeking.
+            // trimBefore offsets into the source file so playback resumes
+            // from the correct position. The HTML video element handles
+            // sequential frame advancement smoothly without any stuttering.
+            <Video
+              src={data.avatar}
+              muted
+              loop
+              trimBefore={videoTrimBase}
+              style={videoStyle}
+            />
+          ) : (
+            // NOT SPEAKING: Freeze at the last spoken frame.
+            // Only a single seek — no continuous seeking overhead.
+            <Freeze frame={0}>
+              <Video
+                src={data.avatar}
+                muted
+                loop
+                trimBefore={videoTrimBase}
+                style={videoStyle}
+              />
+            </Freeze>
+          )
         ) : (
           <Img 
             src={data.avatar} 
