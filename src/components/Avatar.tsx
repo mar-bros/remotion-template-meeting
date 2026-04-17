@@ -30,20 +30,17 @@ export const Avatar: React.FC<AvatarProps> = ({
   // speakingFrame = base + (isSpeaking ? frame : 0)
   const videoOffset = isSpeaking ? speakingFrame - frame : speakingFrame;
 
-  // Pulsing border animation
-  const pulseScale = isSpeaking 
+  // Pulsing border animation - ONLY for image avatars (prevent overlapping motion on video)
+  const pulseScale = (isSpeaking && !isVideo) 
     ? interpolate(Math.sin(frame / 5), [-1, 1], [1, 1.05]) 
     : 1;
     
-  // Scheme A: Slowly breathing/floating animation
-  const floatY = Math.sin(frame / 30 + (protocol.length % 10)) * s(isSmall ? 1 : 5);
-  const floatX = Math.cos(frame / 45 + (protocol.length % 10)) * s(isSmall ? 1 : 3);
-    
-  // Glitch effect for Black Hat (deterministic based on global frame)
-  const glitchActive = data.hasGlitch && (Math.sin(frame * 0.5) > 0.98);
+  // Enhanced Glitch effect for Void (ONLY when speaking)
+  const glitchActive = data.hasGlitch && isSpeaking && (Math.sin(frame * 0.5) > 0.8);
+  const glitchIntensity = 10;
   const glitchTransform = glitchActive
-    ? `translate(${(Math.sin(frame) * s(5))}px, ${(Math.cos(frame) * s(5))}px)`
-    : "none";
+    ? `translate(${(Math.sin(frame * 10) * s(glitchIntensity))}px, ${(Math.cos(frame * 10) * s(glitchIntensity))}px) skew(${Math.sin(frame) * 10}deg)`
+    : "";
 
   const videoStyle = { width: "100%", height: "100%", borderRadius: "50%", objectFit: "cover" as const };
 
@@ -58,7 +55,6 @@ export const Avatar: React.FC<AvatarProps> = ({
       backgroundColor: "rgba(0,0,0,0.3)",
       position: "relative",
       padding: isSmall ? `0 ${s(15)}px` : 0,
-      transform: `translate(${floatX}px, ${floatY}px) ${glitchTransform}`,
     }}>
       {/* Avatar Content - circular container */}
       <div style={{
@@ -66,10 +62,10 @@ export const Avatar: React.FC<AvatarProps> = ({
         aspectRatio: "1",
         borderRadius: "50%",
         border: `${s(isSmall ? 2 : 4)}px solid ${isSpeaking ? data.color : "rgba(255,255,255,0.1)"}`,
-        transform: `scale(${pulseScale})`,
+        transform: `scale(${pulseScale}) ${glitchTransform}`,
         padding: s(5),
-        boxShadow: isSpeaking ? `0 0 ${s(30)}px ${data.color}88` : "none",
-        transition: "all 0.2s ease",
+        boxShadow: (isSpeaking && !isVideo) ? `0 0 ${s(30)}px ${data.color}88` : "none",
+        transition: "border 0.2s ease, box-shadow 0.2s ease",
         overflow: "hidden",
         backgroundColor: "#000",
         flexShrink: 0
@@ -77,15 +73,11 @@ export const Avatar: React.FC<AvatarProps> = ({
         {isVideo ? (
           isSpeaking ? (
             // SPEAKING: Use a Sequence with negative `from` to shift the timeline.
-            // This makes the Video think it started `videoOffset` frames ago,
-            // so it naturally plays from the correct source position.
-            // No Freeze = no per-frame seeking = perfectly smooth playback.
             <Sequence from={-videoOffset} layout="none">
               <Video src={data.avatar} muted loop style={videoStyle} />
             </Sequence>
           ) : (
-            // NOT SPEAKING: Freeze at frame 0, with the same Sequence offset.
-            // Video sees a single static frame — no continuous seeking.
+            // NOT SPEAKING: Freeze at current offset position.
             <Sequence from={-videoOffset} layout="none">
               <Freeze frame={videoOffset}>
                 <Video src={data.avatar} muted loop style={videoStyle} />
@@ -137,26 +129,6 @@ export const Avatar: React.FC<AvatarProps> = ({
           </svg>
         )}
       </div>
-
-      {/* CPU Usage Bar - Fixed at bottom for visibility */}
-      {isSpeaking && (
-        <div style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: s(2),
-          backgroundColor: `${data.color}22`,
-        }}>
-          <div style={{
-            width: `${(cpuUsage + Math.sin(frame/10) * 0.05) * 100}%`,
-            height: "100%",
-            backgroundColor: data.color,
-            boxShadow: `0 0 ${s(5)}px ${data.color}`,
-            transition: "width 0.1s linear"
-          }} />
-        </div>
-      )}
     </div>
   );
 };

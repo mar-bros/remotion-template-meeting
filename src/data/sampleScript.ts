@@ -10,7 +10,7 @@ export const sampleScript: Scene[] = [
   },
   {
     mode: "council",
-    speaker: "green",
+    speaker: "black",
     text: "从数据来看，脑机接口的同步率已达 98.2%。这在技术上已经接近临界点。",
     durationInFrames: 150,
   },

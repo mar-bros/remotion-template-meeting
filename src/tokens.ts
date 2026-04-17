@@ -32,7 +32,7 @@ export const PROTOCOLS = {
     gender: "男性",
     personality: "",// 极致怀疑
     avatar: staticFile("/avatars/black.png"),
-    hasGlitch: false,
+    hasGlitch: true,
   },
   yellow: {
     name: "Solar",
