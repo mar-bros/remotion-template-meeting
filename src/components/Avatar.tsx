@@ -1,4 +1,4 @@
-import { Freeze, Img, Video, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { Freeze, Img, Sequence, Video, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { useScale } from "../hooks/useScale";
 import { PROTOCOLS, ProtocolType } from "../tokens";
 
@@ -19,7 +19,6 @@ export const Avatar: React.FC<AvatarProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { s } = useScale();
-  const { fps } = useVideoConfig();
   const data = PROTOCOLS[protocol];
 
   // Detect asset type
@@ -27,10 +26,9 @@ export const Avatar: React.FC<AvatarProps> = ({
                   data.avatar.toLowerCase().endsWith(".webm") || 
                   data.avatar.toLowerCase().endsWith(".mov");
 
-  // Calculate the base offset: how many frames this character spoke
-  // BEFORE the current Series.Sequence started.
-  // speakingFrame = base + (isSpeaking ? frame : 0), so base = speakingFrame - (isSpeaking ? frame : 0)
-  const videoTrimBase = isSpeaking ? speakingFrame - frame : speakingFrame;
+  // Base offset: total frames this character spoke before this scene
+  // speakingFrame = base + (isSpeaking ? frame : 0)
+  const videoOffset = isSpeaking ? speakingFrame - frame : speakingFrame;
 
   // Pulsing border animation
   const pulseScale = isSpeaking 
@@ -78,29 +76,21 @@ export const Avatar: React.FC<AvatarProps> = ({
       }}>
         {isVideo ? (
           isSpeaking ? (
-            // SPEAKING: Let Video play naturally — no Freeze, no per-frame seeking.
-            // trimBefore offsets into the source file so playback resumes
-            // from the correct position. The HTML video element handles
-            // sequential frame advancement smoothly without any stuttering.
-            <Video
-              src={data.avatar}
-              muted
-              loop
-              trimBefore={videoTrimBase}
-              style={videoStyle}
-            />
+            // SPEAKING: Use a Sequence with negative `from` to shift the timeline.
+            // This makes the Video think it started `videoOffset` frames ago,
+            // so it naturally plays from the correct source position.
+            // No Freeze = no per-frame seeking = perfectly smooth playback.
+            <Sequence from={-videoOffset} layout="none">
+              <Video src={data.avatar} muted loop style={videoStyle} />
+            </Sequence>
           ) : (
-            // NOT SPEAKING: Freeze at the last spoken frame.
-            // Only a single seek — no continuous seeking overhead.
-            <Freeze frame={0}>
-              <Video
-                src={data.avatar}
-                muted
-                loop
-                trimBefore={videoTrimBase}
-                style={videoStyle}
-              />
-            </Freeze>
+            // NOT SPEAKING: Freeze at frame 0, with the same Sequence offset.
+            // Video sees a single static frame — no continuous seeking.
+            <Sequence from={-videoOffset} layout="none">
+              <Freeze frame={videoOffset}>
+                <Video src={data.avatar} muted loop style={videoStyle} />
+              </Freeze>
+            </Sequence>
           )
         ) : (
           <Img 
