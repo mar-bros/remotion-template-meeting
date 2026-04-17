@@ -7,7 +7,7 @@ export const PROTOCOLS = {
     age: "200",
     gender: "中性",
     personality: "", // 理性控场
-    avatar: staticFile("/avatars/blue.png"),
+    avatar: staticFile("/avatars/blue.mp4"),
   },
   white: {
     name: "Data",
@@ -15,7 +15,7 @@ export const PROTOCOLS = {
     age: "28",
     gender: "女性",
     personality: "", // 事实主义
-    avatar: staticFile("/avatars/white.png"),
+    avatar: staticFile("/avatars/white.mp4"),
   },
   red: {
     name: "Echo",
@@ -23,7 +23,7 @@ export const PROTOCOLS = {
     age: "22",
     gender: "女性",
     personality: "", // 感性模拟
-    avatar: staticFile("/avatars/red.png"),
+    avatar: staticFile("/avatars/red.mp4"),
   },
   black: {
     name: "Void",
@@ -31,8 +31,8 @@ export const PROTOCOLS = {
     age: "45",
     gender: "男性",
     personality: "",// 极致怀疑
-    avatar: staticFile("/avatars/black.png"),
-    hasGlitch: true,
+    avatar: staticFile("/avatars/black.mp4"),
+    hasGlitch: false,
   },
   yellow: {
     name: "Solar",
@@ -40,7 +40,7 @@ export const PROTOCOLS = {
     age: "18",
     gender: "男性",
     personality: "", // 乐观进化
-    avatar: staticFile("/avatars/yellow.png"),
+    avatar: staticFile("/avatars/yellow.mp4"),
   },
   green: {
     name: "Flux",

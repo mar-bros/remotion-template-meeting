@@ -10,17 +10,29 @@ export const sampleScript: Scene[] = [
   },
   {
     mode: "council",
-    speaker: "black",
+    speaker: "white",
     text: "从数据来看，脑机接口的同步率已达 98.2%。这在技术上已经接近临界点。",
     durationInFrames: 150,
   },
   {
-    mode: "presentation",
+    mode: "council",
+    speaker: "red",
+    text: "从数据来看，脑机接口的同步率已达 98.2%。这在技术上已经接近临界点。",
+    durationInFrames: 150,
+  },
+  {
+    mode: "council",
     speaker: "black",
     text: "但这正是风险所在。如果代码产生坏道，所谓的永生只是无尽的电子炼狱。",
     durationInFrames: 240,
     contentUrl: staticFile("/share-desktop.png"), // Using desktop as a placeholder for a "glitchy footage"
     contentType: "image",
+  },
+  {
+    mode: "council",
+    speaker: "yellow",
+    text: "但这正是风险所在。如果代码产生坏道，所谓的永生只是无尽的电子炼狱。",
+    durationInFrames: 120
   },
   {
     mode: "presentation",
