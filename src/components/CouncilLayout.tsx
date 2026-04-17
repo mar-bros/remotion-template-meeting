@@ -29,7 +29,7 @@ export const CouncilLayout: React.FC<CouncilLayoutProps> = ({
 
   return (
     <div style={{
-      padding: isVertical ? `0px` : `${s(80)}px ${s(260)}px`,
+      padding: isVertical ? `0px` : `${s(60)}px ${s(120)}px`,
       width: "100%",
       height: "100%",
     }}>

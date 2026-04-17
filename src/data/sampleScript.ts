@@ -7,6 +7,7 @@ export const sampleScript: Scene[] = [
     speaker: "blue",
     text: "欢迎来到《噪声之下》。我是 Kai。今天我们将启动逻辑会审，讨论数字永生。",
     durationInFrames: 120,
+    audioUrl: "tts/kai_scene1.mp3", // Example placeholder
   },
   {
     mode: "council",
