@@ -9,9 +9,9 @@ interface WindowProps {
   borderColor?: string;
 }
 
-export const Window: React.FC<WindowProps> = ({ 
-  title, 
-  children, 
+export const Window: React.FC<WindowProps> = ({
+  title,
+  children,
   style,
   borderColor = "rgba(255,255,255,0.1)"
 }) => {
@@ -48,16 +48,16 @@ export const Window: React.FC<WindowProps> = ({
           <div style={{ width: s(12), height: s(12), borderRadius: "50%", backgroundColor: "#ffbd2e" }} />
           <div style={{ width: s(12), height: s(12), borderRadius: "50%", backgroundColor: "#27c93f" }} />
         </div>
-        
-        <span style={{ 
-          color: "rgba(255,255,255,0.6)", 
-          fontSize: s(14), 
+
+        <span style={{
+          color: "rgba(255,255,255,0.6)",
+          fontSize: s(14),
           fontFamily: "sans-serif",
           fontWeight: 500
         }}>
           {title}
         </span>
-        
+
         <div style={{ width: s(40) }} /> {/* Spacer to center title if needed or balance */}
       </div>
 

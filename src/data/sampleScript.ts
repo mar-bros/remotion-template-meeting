@@ -10,7 +10,7 @@ export const sampleScript: Scene[] = [
   },
   {
     mode: "council",
-    speaker: "white",
+    speaker: "green",
     text: "从数据来看，脑机接口的同步率已达 98.2%。这在技术上已经接近临界点。",
     durationInFrames: 150,
   },
@@ -19,7 +19,7 @@ export const sampleScript: Scene[] = [
     speaker: "black",
     text: "但这正是风险所在。如果代码产生坏道，所谓的永生只是无尽的电子炼狱。",
     durationInFrames: 240,
-    contentUrl: staticFile("/bg-desktop.png"), // Using desktop as a placeholder for a "glitchy footage"
+    contentUrl: staticFile("/share-desktop.png"), // Using desktop as a placeholder for a "glitchy footage"
     contentType: "image",
   },
   {
@@ -27,7 +27,7 @@ export const sampleScript: Scene[] = [
     speaker: "red",
     text: "但对于失去至亲的人来说，哪怕是代码里的一个拥抱，也是一种慈悲。",
     durationInFrames: 180,
-    contentUrl: staticFile("/bg-desktop.png"),
+    contentUrl: staticFile("/share-desktop.png"),
     contentType: "image",
   },
   {

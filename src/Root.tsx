@@ -10,7 +10,7 @@ export const RemotionRoot: React.FC = () => {
     <>
       <Composition
         id="KaiPodcast"
-        component={() => <KaiCore scenes={sampleScript} />}
+        component={() => <KaiCore scenes={sampleScript} title="数字永生协议会审" />}
         durationInFrames={durationInFrames}
         fps={30}
         width={1280}
@@ -23,7 +23,7 @@ export const RemotionRoot: React.FC = () => {
         component={() => <KaiCore scenes={sampleScript} />}
         durationInFrames={durationInFrames}
         fps={30}
-        width={720}
+        width={1280}
         height={1280}
       />
     </>

@@ -16,31 +16,68 @@ export interface Scene {
 
 interface KaiCoreProps {
   scenes: Scene[];
+  title?: string;
 }
 
-export const KaiCore: React.FC<KaiCoreProps> = ({ scenes }) => {
+export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录" }) => {
   const { width, height } = useVideoConfig();
+  const isVertical = height > width;
+
+  // Pre-calculate cumulative speaking frames for each protocol
+  const speakingFrameMap = React.useMemo(() => {
+    const protocols: ProtocolType[] = ["blue", "white", "red", "black", "yellow", "green"];
+    const totalDuration = scenes.reduce((sum, s) => sum + s.durationInFrames, 0);
+    
+    // Initialize maps
+    const map: Record<string, number[]> = {};
+    protocols.forEach(p => map[p] = new Array(totalDuration).fill(0));
+    
+    const currentCounters: Record<string, number> = {};
+    protocols.forEach(p => currentCounters[p] = 0);
+    
+    let currentGlobalFrame = 0;
+    
+    scenes.forEach(scene => {
+      for (let f = 0; f < scene.durationInFrames; f++) {
+        // Record current counts for all protocols at this global frame
+        protocols.forEach(p => {
+          map[p][currentGlobalFrame] = currentCounters[p];
+        });
+        
+        // Increment the counter for the active speaker AFTER recording
+        // so that the first frame of speaking is frame 0 of the video
+        if (scene.speaker) {
+          currentCounters[scene.speaker]++;
+        }
+        
+        currentGlobalFrame++;
+      }
+    });
+    
+    return map;
+  }, [scenes]);
 
   // Asset continuity logic:
-  // We need to calculate how long a video has been playing if it spans multiple scenes
   const getVideoStartTime = (index: number) => {
     const currentScene = scenes[index];
     if (!currentScene.contentUrl || currentScene.contentType !== "video") return 0;
 
     let startTime = 0;
-    // Look backwards for the same video URL
     for (let i = index - 1; i >= 0; i--) {
       if (scenes[i].contentUrl === currentScene.contentUrl) {
         startTime += scenes[i].durationInFrames;
       } else {
-        break; // Found a different asset or none
+        break;
       }
     }
     return startTime;
   };
 
   return (
-    <AbsoluteFill style={{ backgroundColor: THEME.background }}>
+    <AbsoluteFill style={{ 
+      backgroundColor: THEME.background,
+      paddingBottom: isVertical ? "15%" : 0 // Safe area for Shorts/TikTok
+    }}>
       {/* Background Desktop */}
       <AbsoluteFill>
         <Img 
@@ -51,33 +88,32 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes }) => {
 
       {/* Main Orchestrator via Series */}
       <Series>
-        {scenes.map((scene, index) => (
-          <Series.Sequence key={index} durationInFrames={scene.durationInFrames}>
-            {scene.mode === "council" ? (
-              <CouncilLayout speaker={scene.speaker} />
-            ) : (
-              <PresentationLayout 
-                speaker={scene.speaker} 
-                contentUrl={scene.contentUrl} 
-                contentType={scene.contentType}
-                videoStartTime={getVideoStartTime(index)}
-              />
-            )}
-          </Series.Sequence>
-        ))}
+        {scenes.map((scene, index) => {
+          const sequenceStartFrame = scenes.slice(0, index).reduce((acc, s) => acc + s.durationInFrames, 0);
+          return (
+            <Series.Sequence key={index} durationInFrames={scene.durationInFrames}>
+              {scene.mode === "council" ? (
+                <CouncilLayout 
+                  speaker={scene.speaker} 
+                  title={title} 
+                  speakingFrameMap={speakingFrameMap}
+                  startFrame={sequenceStartFrame}
+                />
+              ) : (
+                <PresentationLayout 
+                  speaker={scene.speaker} 
+                  contentUrl={scene.contentUrl} 
+                  contentType={scene.contentType}
+                  videoStartTime={getVideoStartTime(index)}
+                  title={title}
+                  speakingFrameMap={speakingFrameMap}
+                  startFrame={sequenceStartFrame}
+                />
+              )}
+            </Series.Sequence>
+          );
+        })}
       </Series>
-      
-      {/* Logo Overlay */}
-      <div style={{
-        position: "absolute",
-        bottom: 30,
-        right: 40,
-        width: 150,
-        zIndex: 100,
-        opacity: 0.8
-      }}>
-        <Img src={staticFile("/logo.png")} style={{ width: "100%" }} />
-      </div>
     </AbsoluteFill>
   );
 };
