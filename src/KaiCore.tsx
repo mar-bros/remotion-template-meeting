@@ -33,9 +33,13 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
   const isVertical = height > width;
 
   // Pre-calculate cumulative frames spoken by each protocol before each scene
-  const sceneStats = React.useMemo(() => {
+  const { sceneStats, offlineStatus } = React.useMemo(() => {
     const protocols: ProtocolType[] = ["blue", "white", "red", "black", "yellow", "green"];
     const cumulative: Record<string, number>[] = [];
+    const activeSpeakers = new Set(scenes.map(s => s.speaker));
+    
+    const offlineStatus: Record<string, boolean> = {};
+    protocols.forEach(p => offlineStatus[p] = !activeSpeakers.has(p));
 
     let currentTotals: Record<string, number> = {};
     protocols.forEach(p => currentTotals[p] = 0);
@@ -50,7 +54,7 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
       }
     });
 
-    return cumulative;
+    return { sceneStats: cumulative, offlineStatus };
   }, [scenes]);
 
   // Asset continuity logic:
@@ -127,6 +131,7 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
                       speaker={scene.speaker}
                       title={title}
                       prevSpeakingFrames={sceneStats[index]}
+                      offlineStatus={offlineStatus}
                     />
                   ) : (
                     <PresentationLayout
@@ -136,6 +141,7 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
                       videoStartTime={videoStartTime}
                       title={title}
                       prevSpeakingFrames={sceneStats[index]}
+                      offlineStatus={offlineStatus}
                     />
                   )}
                 </div>

@@ -12,6 +12,7 @@ interface PresentationLayoutProps {
   videoStartTime?: number; // In frames
   title?: string;
   prevSpeakingFrames: Record<string, number>;
+  offlineStatus: Record<string, boolean>;
 }
 
 export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
@@ -20,7 +21,8 @@ export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
   contentType = "image",
   videoStartTime = 0,
   title = "逻辑会审",
-  prevSpeakingFrames
+  prevSpeakingFrames,
+  offlineStatus
 }) => {
   const frame = useCurrentFrame();
   const { s, isVertical, width, height } = useScale();
@@ -106,6 +108,7 @@ export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
                 <Avatar
                   protocol={p}
                   isSpeaking={speaker === p}
+                  isOffline={offlineStatus[p]}
                   speakingFrame={prevSpeakingFrames[p] + (speaker === p ? frame : 0)}
                   isSmall={true}
                 />

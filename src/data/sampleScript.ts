@@ -61,28 +61,6 @@ export const sampleScript: any[] = [
   },
   {
     mode: "council",
-    speaker: "yellow",
-    segments: [
-      {
-        text: "乐观一点，我们正在创造新的生命形态。",
-        durationInFrames: 120,
-      }
-    ]
-  },
-  {
-    mode: "presentation",
-    speaker: "green",
-    segments: [
-      {
-        text: "看看这些裂变的数据，这难道不是艺术吗？",
-        durationInFrames: 180,
-      }
-    ],
-    contentUrl: staticFile("/share-desktop.png"),
-    contentType: "image",
-  },
-  {
-    mode: "council",
     speaker: "blue",
     segments: [
       {

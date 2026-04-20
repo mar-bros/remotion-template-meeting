@@ -9,12 +9,14 @@ interface CouncilLayoutProps {
   speaker?: ProtocolType;
   title?: string;
   prevSpeakingFrames: Record<string, number>;
+  offlineStatus: Record<string, boolean>;
 }
 
 export const CouncilLayout: React.FC<CouncilLayoutProps> = ({
   speaker,
   title = "逻辑会审",
-  prevSpeakingFrames
+  prevSpeakingFrames,
+  offlineStatus
 }) => {
   const frame = useCurrentFrame();
   const { s, isVertical } = useScale();
@@ -61,6 +63,7 @@ export const CouncilLayout: React.FC<CouncilLayoutProps> = ({
               <Avatar
                 protocol={p}
                 isSpeaking={speaker === p}
+                isOffline={offlineStatus[p]}
                 speakingFrame={prevSpeakingFrames[p] + (speaker === p ? frame : 0)}
               />
             </div>
