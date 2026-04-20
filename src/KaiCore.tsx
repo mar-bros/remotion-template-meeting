@@ -7,12 +7,17 @@ import { PresentationLayout } from "./components/PresentationLayout";
 import { Subtitles } from "./components/Subtitles";
 import { useScale } from "./hooks/useScale";
 
+export interface DialogueSegment {
+  text: string;
+  audioUrl?: string;
+  durationInFrames: number; // Enforced after calculation
+}
+
 export interface Scene {
-  durationInFrames: number;
+  durationInFrames: number; // Total sum of segments
   mode: "council" | "presentation";
   speaker: ProtocolType;
-  text: string;
-  audioUrl?: string; // NEW: Path to the TTS audio file in public/
+  segments: DialogueSegment[];
   contentUrl?: string;
   contentType?: "image" | "video";
 }
@@ -92,12 +97,22 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
             const videoStartTime = getVideoStartTime(index);
             return (
               <Series.Sequence key={index} durationInFrames={scene.durationInFrames}>
-                {/* Optional Audio Playback */}
-                {scene.audioUrl && (
-                  <Audio src={staticFile(scene.audioUrl)} />
-                )}
+                {/* Internal Sequencing for multiple dialogues */}
+                <Series>
+                  {scene.segments.map((segment, sIndex) => (
+                    <Series.Sequence key={sIndex} durationInFrames={segment.durationInFrames}>
+                      {/* Audio Playback for this segment */}
+                      {segment.audioUrl && (
+                        <Audio src={staticFile(segment.audioUrl)} />
+                      )}
 
-                {/* Window Area (Top 82%) */}
+                      {/* Subtitle Area for this segment */}
+                      <Subtitles text={segment.text} speaker={scene.speaker} />
+                    </Series.Sequence>
+                  ))}
+                </Series>
+
+                {/* Window Area (Top 92%) - Stays active for entire scene */}
                 <div style={{
                   position: "absolute",
                   top: 0,
@@ -105,6 +120,7 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
                   right: 0,
                   height: "92%",
                   padding: s(10),
+                  pointerEvents: "none", // Allow Series underneath if needed, though layouts have their own containers
                 }}>
                   {scene.mode === "council" ? (
                     <CouncilLayout
@@ -123,9 +139,6 @@ export const KaiCore: React.FC<KaiCoreProps> = ({ scenes, title = "会审记录"
                     />
                   )}
                 </div>
-
-                {/* Subtitle Area (Bottom 18%) */}
-                <Subtitles text={scene.text} speaker={scene.speaker} />
               </Series.Sequence>
             );
           })}
