@@ -32,56 +32,42 @@ export const OutroSlide: React.FC<OutroSlideProps> = ({
       <div
         style={{
           width: "100%",
-          maxWidth: s(900),
-          background: "rgba(255,255,255,0.03)",
-          borderRadius: s(24),
-          border: `1px solid rgba(255,255,255,0.1)`,
-          padding: s(50),
+          maxWidth: s(1000),
           display: "flex",
           flexDirection: "column",
-          gap: s(40),
-          backdropFilter: "blur(10px)",
+          gap: s(60),
           alignItems: "center",
+          textAlign: "center",
         }}
       >
         <Img
           src={staticFile("/logo-generated.png")}
           style={{
-            width: s(120),
-            height: s(120),
+            width: s(180),
+            height: s(180),
             borderRadius: "50%",
-            boxShadow: `0 0 ${s(20)}px ${THEME.accentBlue}66`,
-            filter: "drop-shadow(0 5px 10px rgba(0,0,0,0.5))",
-            marginBottom: s(10),
+            boxShadow: `0 0 ${s(40)}px ${THEME.accentBlue}33`,
+            filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.5))",
+            marginBottom: s(20),
           }}
         />
 
         {/* Character Traits Section */}
-        <div style={{ width: "100%" }}>
-          <div style={{ color: THEME.accentBlue, fontSize: s(20), fontWeight: 700, marginBottom: s(10), textTransform: "uppercase", letterSpacing: 2 }}>
-            人格矩阵 / Character Protocol
-          </div>
-          <div style={{ fontSize: s(24), lineHeight: 1.6, color: "rgba(255,255,255,0.8)" }}>
+        <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>
+          <div style={{ fontSize: s(26), lineHeight: 1.8, color: "rgba(255,255,255,0.6)", fontWeight: 300 }}>
             {characterTraits}
           </div>
         </div>
 
-        <div style={{ height: 1, background: "rgba(255,255,255,0.1)" }} />
-
         {/* Disclaimer Section */}
-        <div>
-          <div style={{ color: "#ff4444", fontSize: s(20), fontWeight: 700, marginBottom: s(10), textTransform: "uppercase", letterSpacing: 2 }}>
-            法律与免责 / Legal & Disclaimer
-          </div>
-          <div style={{ fontSize: s(20), lineHeight: 1.5, color: "rgba(255,255,255,0.6)", fontStyle: "italic" }}>
+        <div style={{ width: "100%", whiteSpace: "pre-wrap" }}>
+          <div style={{ fontSize: s(20), lineHeight: 1.6, color: "rgba(255,255,255,0.4)", fontStyle: "normal" }}>
             {disclaimer}
           </div>
         </div>
 
-        <div style={{ height: 1, background: "rgba(255,255,255,0.1)" }} />
-
         {/* Copyright Footer */}
-        <div style={{ textAlign: "center", fontSize: s(18), color: "rgba(255,255,255,0.4)" }}>
+        <div style={{ marginTop: s(40), fontSize: s(18), color: "rgba(255,255,255,0.3)", letterSpacing: 1 }}>
           {copyright}
         </div>
       </div>

@@ -4,7 +4,7 @@ import type { ProtocolConfig, ProtocolType } from "./types";
 export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   blue: {
     name: "蓝凯",
-    color: "#002FA7",
+    color: "#2e86de", // Softer, more pleasant blue
     age: "200",
     gender: "中性",
     personality: "", // 理性控场
@@ -14,7 +14,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   },
   white: {
     name: "素问",
-    color: "#F0F0F0",
+    color: "#f5f6fa", // Off-white, softer on dark backgrounds
     age: "28",
     gender: "女性",
     personality: "", // 事实主义
@@ -24,7 +24,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   },
   red: {
     name: "沁沁",
-    color: "#DC143C",
+    color: "#ff5252", // Pleasing material red
     age: "22",
     gender: "女性",
     personality: "",// 感性模拟
@@ -34,7 +34,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   },
   black: {
     name: "冷岩",
-    color: "#1A1A1A",
+    color: "#57606f", // Slate dark grey (visible on black backgrounds)
     age: "45",
     gender: "男性",
     personality: "", // 极致怀疑
@@ -44,7 +44,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   },
   yellow: {
     name: "旭阳",
-    color: "#FFD700",
+    color: "#feca57", // Warm, non-stark yellow
     age: "18",
     gender: "男性",
     personality: "", // 乐观进化
@@ -54,7 +54,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   },
   green: {
     name: "阿梦",
-    color: "#39FF14",
+    color: "#1dd1a1", // Mint green, safe and readable
     age: "随机",
     gender: "非二元",
     personality: "", // 创意裂变

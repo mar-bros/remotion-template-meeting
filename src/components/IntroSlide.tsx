@@ -54,31 +54,77 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
           }}
         />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <h1
-            style={{
-              color: "#fff",
-              fontSize: s(120),
-              fontWeight: 900,
-              margin: 0,
-              letterSpacing: s(10),
-              textTransform: "uppercase",
-              textShadow: `0 0 ${s(20)}px ${THEME.accentBlue}, 0 0 ${s(40)}px ${THEME.accentBlue}66`,
-              fontFamily: "Outfit, sans-serif",
-              lineHeight: 1,
-              background: `linear-gradient(to bottom, #fff 40%, ${THEME.accentBlue} 100%)`,
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: "drop-shadow(0 5px 15px rgba(0,0,0,0.5))",
-            }}
-          >
-            {title}
-          </h1>
+          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: s(5) }}>
+            {title.split("").map((char, i) => {
+              // 6 Safe, vibrant theme colors corresponding to the hats
+              const SAFE_COLORS = [
+                "#2e86de", // Blue
+                "#f5f6fa", // White
+                "#ff5252", // Red
+                "#a4b0be", // Grey (Black hat substitute)
+                "#feca57", // Yellow
+                "#1dd1a1", // Green
+              ];
+              // Pseudo-random consistent color based on character and index
+              const colorIndex = (char.charCodeAt(0) + i) % SAFE_COLORS.length;
+              const charColor = SAFE_COLORS[colorIndex];
+
+              return (
+                <div key={i} style={{ position: "relative", display: "inline-block" }}>
+                  {/* Background offset block */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: s(-5),
+                      top: s(5),
+                      width: "110%",
+                      height: "100%",
+                      backgroundColor: charColor,
+                      zIndex: -1,
+                      borderRadius: s(8),
+                      transform: `rotate(${((char.charCodeAt(0) % 10) - 5)}deg)`, // Subtle random rotation
+                    }}
+                  />
+                  {/* Thick stroke behind */}
+                  <span
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      fontSize: s(140),
+                      fontWeight: 900,
+                      fontFamily: "Outfit, sans-serif",
+                      WebkitTextStroke: `${s(24)}px #111`,
+                      color: "transparent",
+                      zIndex: 0,
+                    }}
+                  >
+                    {char}
+                  </span>
+                  {/* Main text fill - White */}
+                  <span
+                    style={{
+                      position: "relative",
+                      fontSize: s(140),
+                      fontWeight: 900,
+                      fontFamily: "Outfit, sans-serif",
+                      color: "#fff",
+                      zIndex: 1,
+                    }}
+                  >
+                    {char}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
           <div
             style={{
-              marginTop: s(20),
-              height: s(4),
-              width: "100%",
-              background: `linear-gradient(to right, transparent, ${THEME.accentBlue}, transparent)`,
+              marginTop: s(40),
+              height: s(6),
+              width: "80%",
+              background: `linear-gradient(to right, transparent, #fff, transparent)`,
+              opacity: 0.5,
             }}
           />
         </div>

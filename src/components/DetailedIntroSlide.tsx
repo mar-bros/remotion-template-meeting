@@ -97,14 +97,25 @@ export const DetailedIntroSlide: React.FC<DetailedIntroSlideProps> = ({
           
           const isLatest = i === visibleChars - 1;
           
+          // 6 Safe theme colors
+          const SAFE_COLORS = [
+            "#2e86de", // Blue
+            "#f5f6fa", // White
+            "#ff5252", // Red
+            "#57606f", // Grey
+            "#feca57", // Yellow
+            "#1dd1a1", // Green
+          ];
+          const charColor = SAFE_COLORS[(i) % SAFE_COLORS.length];
+
           return (
             <span
               key={i}
               style={{
                 display: "inline-block",
                 padding: `0 ${s(2)}px`,
-                backgroundColor: isLatest ? THEME.accentBlue : "transparent",
-                color: "#fff",
+                backgroundColor: isLatest ? charColor : "transparent",
+                color: isLatest && (i % SAFE_COLORS.length === 1 || i % SAFE_COLORS.length === 4) ? "#111" : "#fff", // Dark text for bright backgrounds (white/yellow)
                 borderRadius: s(4),
                 transition: "background-color 0.1s ease",
               }}

@@ -1,7 +1,7 @@
 import type { SceneInput, IntroProps, DetailedIntroProps, OutroProps } from "../types";
 
 export const sampleIntro: IntroProps = {
-  title: "数字永生协议会审",
+  title: "电车难题，AI 如何看？",
 };
 
 export const sampleDetailedIntro: DetailedIntroProps = {
@@ -9,9 +9,9 @@ export const sampleDetailedIntro: DetailedIntroProps = {
 };
 
 export const sampleOutro: OutroProps = {
-  copyright: "© 2026 Beneath the Noise. All rights reserved.",
-  characterTraits: "蓝(理性)、素(事实)、沁(感性)、岩(怀疑)、阳(乐观)、梦(创意)",
-  disclaimer: "本视频内容由 AI 自动生成，并不代表任何真实实体的观点。在决策前请咨询人类专业人士。",
+  characterTraits: "Ollama kimi-k2.5:cloud\n VoxCPM2 TTS \n https://github.com/mar-bros/remotion-template-meeting",
+  disclaimer: "本视频内容由 AI 自动生成，并不代表任何真实实体的观点，不构成决策建议。",
+  copyright: "© 2026 All rights reserved.",
 };
 
 export const sampleAiDisclaimer = "本视频内容由AI生成，观点未必正确，仅供娱乐";
