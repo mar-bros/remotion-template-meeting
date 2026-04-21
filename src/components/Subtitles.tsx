@@ -39,26 +39,29 @@ export const Subtitles: React.FC<SubtitlesProps> = ({ text, speaker }) => {
       pointerEvents: "none",
       zIndex: 100,
     }}>
-      {/* Tag — left aligned, absolutely positioned */}
-      <span style={{
+      {/* Tag — left aligned, full height */}
+      <div style={{
         position: "absolute",
-        left: s(30),
-        top: "50%",
-        transform: "translateY(-50%)",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        display: "flex",
+        alignItems: "center",
         backgroundColor: data.color,
         color: "white",
         fontSize: s(14),
         fontWeight: "bold",
-        padding: `${s(2)}px ${s(12)}px`,
-        borderRadius: s(4),
+        padding: `0 ${s(30)}px`,
+        borderTopLeftRadius: s(12),
+        borderBottomLeftRadius: s(12),
         textTransform: "uppercase",
         letterSpacing: s(1),
-        boxShadow: `0 0 ${s(10)}px ${data.color}44`,
+        boxShadow: `2px 0 ${s(15)}px rgba(0,0,0,0.3)`,
         textShadow: "0 1px 2px rgba(0,0,0,0.8)",
         whiteSpace: "nowrap",
       }}>
         {data.name}
-      </span>
+      </div>
 
       {/* Text — centered across full width */}
       <div style={{
