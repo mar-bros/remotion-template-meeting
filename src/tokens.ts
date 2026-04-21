@@ -1,6 +1,7 @@
 import { staticFile } from "remotion";
+import type { ProtocolConfig, ProtocolType } from "./types";
 
-export const PROTOCOLS = {
+export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   blue: {
     name: "Kai",
     color: "#002FA7",
@@ -8,6 +9,8 @@ export const PROTOCOLS = {
     gender: "中性",
     personality: "", // 理性控场
     avatar: staticFile("/avatars/blue.mp4"),
+    avatarType: "video",
+    hasGlitch: false,
   },
   white: {
     name: "Data",
@@ -16,22 +19,27 @@ export const PROTOCOLS = {
     gender: "女性",
     personality: "", // 事实主义
     avatar: staticFile("/avatars/white.mp4"),
+    avatarType: "video",
+    hasGlitch: false,
   },
   red: {
     name: "Echo",
     color: "#DC143C",
     age: "22",
     gender: "女性",
-    personality: "", // 感性模拟
+    personality: "",// 感性模拟
     avatar: staticFile("/avatars/red.mp4"),
+    avatarType: "video",
+    hasGlitch: false,
   },
   black: {
     name: "Void",
     color: "#1A1A1A",
     age: "45",
     gender: "男性",
-    personality: "",// 极致怀疑
+    personality: "", // 极致怀疑
     avatar: staticFile("/avatars/black.mp4"),
+    avatarType: "video",
     hasGlitch: false,
   },
   yellow: {
@@ -41,6 +49,8 @@ export const PROTOCOLS = {
     gender: "男性",
     personality: "", // 乐观进化
     avatar: staticFile("/avatars/yellow.mp4"),
+    avatarType: "video",
+    hasGlitch: false,
   },
   green: {
     name: "Flux",
@@ -49,10 +59,12 @@ export const PROTOCOLS = {
     gender: "非二元",
     personality: "", // 创意裂变
     avatar: staticFile("/avatars/green.mp4"),
+    avatarType: "video",
+    hasGlitch: false,
   },
-} as const;
+};
 
-export type ProtocolType = keyof typeof PROTOCOLS;
+export const PROTOCOL_KEYS: ProtocolType[] = Object.keys(PROTOCOLS) as ProtocolType[];
 
 export const THEME = {
   background: "#0a0a0a",

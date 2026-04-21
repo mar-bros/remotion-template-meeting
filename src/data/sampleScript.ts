@@ -1,10 +1,9 @@
-import { staticFile } from "remotion";
-import { Scene, DialogueSegment } from "../KaiCore";
+import type { SceneInput } from "../types";
 
-// This is the raw data input. 
-// segments.durationInFrames and segments.audioUrl are optional here, 
-// they will be resolved in Root.tsx via calculateMetadata
-export const sampleScript: any[] = [
+// Raw script data input.
+// segments.durationInFrames and segments.audioUrl are optional here;
+// they will be resolved in Root.tsx via calculateMetadata.
+export const sampleScript: SceneInput[] = [
   {
     mode: "council",
     speaker: "blue",
@@ -16,7 +15,7 @@ export const sampleScript: any[] = [
       {
         text: "今天我们将启动逻辑会审，讨论数字永生。",
         audioUrl: "tts/kai_part2.mp3",
-      }
+      },
     ],
   },
   {
@@ -30,8 +29,8 @@ export const sampleScript: any[] = [
       {
         text: "这在技术上已经接近临界点。",
         durationInFrames: 60,
-      }
-    ]
+      },
+    ],
   },
   {
     mode: "council",
@@ -44,8 +43,8 @@ export const sampleScript: any[] = [
       {
         text: "...也是一种慈悲。",
         durationInFrames: 60,
-      }
-    ]
+      },
+    ],
   },
   {
     mode: "council",
@@ -54,10 +53,8 @@ export const sampleScript: any[] = [
       {
         text: "但这正是风险所在。如果代码产生坏道，所谓的永生只是无尽的电子炼狱。",
         durationInFrames: 240,
-      }
+      },
     ],
-    contentUrl: staticFile("/share-desktop.png"),
-    contentType: "image",
   },
   {
     mode: "council",
@@ -70,11 +67,7 @@ export const sampleScript: any[] = [
       {
         text: "会审暂告一段落。下个维度见。",
         durationInFrames: 120,
-      }
+      },
     ],
-  }
+  },
 ];
-
-export const calculateTotalDuration = (scenes: Scene[]) => {
-  return scenes.reduce((total, scene) => total + (scene.durationInFrames || 0), 0);
-};

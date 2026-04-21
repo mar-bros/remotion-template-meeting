@@ -1,57 +1,86 @@
 import "./index.css";
 import { Composition, getInputProps, staticFile } from "remotion";
 import { getAudioDurationInSeconds } from "@remotion/media-utils";
-import { KaiCore, Scene } from "./KaiCore";
+import { KaiCore } from "./KaiCore";
 import { sampleScript } from "./data/sampleScript";
+import type { SceneInput, DialogueSegment, Scene } from "./types";
+import { KaiCoreSchema } from "./types";
 
 export const RemotionRoot: React.FC = () => {
   const inputProps = getInputProps();
-  const rawScenes = inputProps.scenes || sampleScript;
-  const title = inputProps.title || "数字永生协议会审";
+  const rawScenes = (inputProps.scenes as SceneInput[] | undefined) || sampleScript;
+  const title = (inputProps.title as string) || "数字永生协议会审";
   const fps = 30;
 
   return (
     <>
       <Composition
         id="KaiPodcast"
-        component={KaiCore}
+        component={KaiCore as unknown as React.FC<Record<string, unknown>>}
         durationInFrames={1} // Placeholder, overridden by calculateMetadata
         fps={fps}
         width={1280}
         height={820}
-        schema={null}
+        schema={KaiCoreSchema}
         calculateMetadata={async ({ props }) => {
+          const scenes = props.scenes as SceneInput[];
           const resolvedScenes: Scene[] = [];
           let totalDuration = 0;
 
-          for (const rawScene of (props.scenes as any[])) {
-            let sceneDuration = 0;
-            const resolvedSegments = [];
+          // Parallel: resolve all audio durations at once
+          const allSegmentDurations: Promise<number>[] = [];
+          const segmentMap: { sceneIdx: number; segIdx: number }[] = [];
 
-            for (const segment of rawScene.segments) {
-              let duration = segment.durationInFrames;
-
-              if (!duration) {
-                if (segment.audioUrl) {
-                  try {
-                    const seconds = await getAudioDurationInSeconds(staticFile(segment.audioUrl));
-                    duration = Math.ceil(seconds * fps);
-                  } catch (e) {
-                    console.warn(`Failed to get duration for ${segment.audioUrl}`, e);
-                    duration = 90; // Fallback 3s
-                  }
-                } else {
-                  duration = 90; // Default 3s if no audio
-                }
+          for (let si = 0; si < scenes.length; si++) {
+            const rawScene = scenes[si];
+            for (let sgi = 0; sgi < rawScene.segments.length; sgi++) {
+              const segment = rawScene.segments[sgi];
+              if (segment.durationInFrames) {
+                allSegmentDurations.push(
+                  Promise.resolve(segment.durationInFrames),
+                );
+              } else if (segment.audioUrl) {
+                allSegmentDurations.push(
+                  getAudioDurationInSeconds(staticFile(segment.audioUrl))
+                    .then((seconds) => Math.ceil(seconds * fps))
+                    .catch((e) => {
+                      console.warn(
+                        `Failed to get duration for ${segment.audioUrl}`,
+                        e,
+                      );
+                      return 90; // Fallback 3s
+                    }),
+                );
+              } else {
+                allSegmentDurations.push(Promise.resolve(90)); // Default 3s
               }
-
-              resolvedSegments.push({
-                ...segment,
-                durationInFrames: duration,
-              });
-              sceneDuration += duration;
+              segmentMap.push({ sceneIdx: si, segIdx: sgi });
             }
+          }
 
+          const durations = await Promise.all(allSegmentDurations);
+
+          // Rebuild scenes with resolved durations
+          const durationByScene: Map<number, DialogueSegment[]> = new Map();
+          for (let i = 0; i < segmentMap.length; i++) {
+            const { sceneIdx, segIdx } = segmentMap[i];
+            if (!durationByScene.has(sceneIdx)) {
+              durationByScene.set(sceneIdx, []);
+            }
+            const rawSegment = scenes[sceneIdx].segments[segIdx];
+            durationByScene.get(sceneIdx)!.push({
+              ...rawSegment,
+              durationInFrames: durations[i],
+            });
+          }
+
+          for (let si = 0; si < scenes.length; si++) {
+            const rawScene = scenes[si];
+            const resolvedSegments = durationByScene.get(si) || [];
+            const sceneDuration = resolvedSegments.reduce(
+              (sum, seg) => sum + seg.durationInFrames,
+              0,
+            );
             resolvedScenes.push({
               ...rawScene,
               segments: resolvedSegments,
@@ -69,8 +98,8 @@ export const RemotionRoot: React.FC = () => {
           };
         }}
         defaultProps={{
-          scenes: rawScenes,
-          title
+          scenes: rawScenes as unknown as Scene[], // Schema handles validation at boundary
+          title,
         }}
       />
     </>

@@ -1,106 +1,118 @@
 import React from "react";
-import { Img, Video, useCurrentFrame, useVideoConfig } from "remotion";
+import { Img, Video, useCurrentFrame } from "remotion";
 import { useScale } from "../hooks/useScale";
-import { PROTOCOLS, ProtocolType, THEME } from "../tokens";
+import { PROTOCOLS, PROTOCOL_KEYS, THEME } from "../tokens";
+import type { LayoutProps } from "../types";
 import { Window } from "./Window";
 import { Avatar } from "./Avatar";
 
-interface PresentationLayoutProps {
-  speaker?: ProtocolType;
-  contentUrl?: string;
-  contentType?: "image" | "video";
-  videoStartTime?: number; // In frames
-  title?: string;
-  prevSpeakingFrames: Record<string, number>;
-  offlineStatus: Record<string, boolean>;
-}
-
-export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
+export const PresentationLayout: React.FC<LayoutProps> = ({
   speaker,
   contentUrl,
   contentType = "image",
   videoStartTime = 0,
   title = "逻辑会审",
   prevSpeakingFrames,
-  offlineStatus
+  offlineStatus,
 }) => {
   const frame = useCurrentFrame();
-  const { s, isVertical, width, height } = useScale();
-
-  const gap = s(20);
-  const padding = s(40);
-
-  const protocols: ProtocolType[] = ["blue", "white", "red", "black", "yellow", "green"];
-
-  // Layout logic based on horizontal/vertical
-  const contentWidth = isVertical ? width - (padding * 2) : (width - (padding * 2) - gap) * 0.75;
-  const avatarsWidth = isVertical ? width - (padding * 2) : (width - (padding * 2) - gap) * 0.25;
+  const { s, isVertical } = useScale();
 
   return (
-    <div style={{
-      padding: isVertical ? `0px` : `${s(60)}px ${s(120)}px`,
-      width: "100%",
-      height: "100%",
-    }}>
+    <div
+      style={{
+        padding: isVertical ? `0px` : `${s(60)}px ${s(120)}px`,
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <Window
         title={`噪声之下 - ${title} / 协作模式`}
         style={{ width: "100%", height: "100%" }}
       >
-        <div style={{
-          display: "flex",
-          flexDirection: isVertical ? "column" : "row",
-          width: "100%",
-          height: "100%",
-          backgroundColor: THEME.glassBg
-        }}>
-          {/* Main Content Area - Fill space */}
-          <div style={{
-            flex: isVertical ? 1 : 4.5, // Content dominated
+        <div
+          style={{
             display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "#000",
-            overflow: "hidden"
-          }}>
+            flexDirection: isVertical ? "column" : "row",
+            width: "100%",
+            height: "100%",
+            backgroundColor: THEME.glassBg,
+          }}
+        >
+          {/* Main Content Area - Fill space */}
+          <div
+            style={{
+              flex: isVertical ? 1 : 4.5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#000",
+              overflow: "hidden",
+            }}
+          >
             {contentUrl ? (
               contentType === "video" ? (
-                <Video
-                  src={contentUrl}
-                  startFrom={videoStartTime}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
+                <>
+                  {/* eslint-disable-next-line @remotion/no-object-fit-on-media-video */}
+                  <Video
+                    src={contentUrl}
+                    startFrom={videoStartTime}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                </>
               ) : (
                 <Img
                   src={contentUrl}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
                 />
               )
             ) : (
-              <div style={{ color: "rgba(255,255,255,0.2)", fontSize: s(30) }}>No Content Loaded</div>
+              <div
+                style={{
+                  color: "rgba(255,255,255,0.2)",
+                  fontSize: s(30),
+                }}
+              >
+                No Content Loaded
+              </div>
             )}
           </div>
 
           {/* Participant Sideboard - Compact column */}
-          <div style={{
-            flex: isVertical ? 0.3 : 1, // Sidebar fits to content
-            display: "flex",
-            flexDirection: isVertical ? "row" : "column",
-            padding: s(5),
-            overflow: "hidden",
-            borderLeft: isVertical ? "none" : `${s(1)}px solid rgba(255,255,255,0.1)`,
-            borderTop: isVertical ? `${s(1)}px solid rgba(255,255,255,0.1)` : "none",
-          }}>
-            {protocols.map((p) => (
+          <div
+            style={{
+              flex: isVertical ? 0.3 : 1,
+              display: "flex",
+              flexDirection: isVertical ? "row" : "column",
+              padding: s(5),
+              overflow: "hidden",
+              borderLeft: isVertical
+                ? "none"
+                : `${s(1)}px solid rgba(255,255,255,0.1)`,
+              borderTop: isVertical
+                ? `${s(1)}px solid rgba(255,255,255,0.1)`
+                : "none",
+            }}
+          >
+            {PROTOCOL_KEYS.map((p) => (
               <div
                 key={p}
                 style={{
-                  flex: 1, // Vertical distribution
+                  flex: 1,
                   border: `${s(1)}px solid ${speaker === p ? PROTOCOLS[p].color : "rgba(255,255,255,0.02)"}`,
                   borderRadius: s(4),
                   margin: s(2),
                   overflow: "hidden",
-                  backgroundColor: speaker === p ? "rgba(255,255,255,0.03)" : "transparent",
-                  transition: "all 0.3s ease",
+                  backgroundColor:
+                    speaker === p ? "rgba(255,255,255,0.03)" : "transparent",
                   display: "flex",
                   alignItems: "center",
                 }}
@@ -109,7 +121,9 @@ export const PresentationLayout: React.FC<PresentationLayoutProps> = ({
                   protocol={p}
                   isSpeaking={speaker === p}
                   isOffline={offlineStatus[p]}
-                  speakingFrame={prevSpeakingFrames[p] + (speaker === p ? frame : 0)}
+                  speakingFrame={
+                    prevSpeakingFrames[p] + (speaker === p ? frame : 0)
+                  }
                   isSmall={true}
                 />
               </div>
