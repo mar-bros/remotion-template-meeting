@@ -49,7 +49,7 @@ export const Subtitles: React.FC<SubtitlesProps> = ({ text, speaker }) => {
         alignItems: "center",
         backgroundColor: data.color,
         color: "white",
-        fontSize: s(14),
+        fontSize: s(22),
         fontWeight: "bold",
         padding: `0 ${s(30)}px`,
         borderTopLeftRadius: s(12),
