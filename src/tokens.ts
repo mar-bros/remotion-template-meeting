@@ -3,7 +3,7 @@ import type { ProtocolConfig, ProtocolType } from "./types";
 
 export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
   blue: {
-    name: "Kai",
+    name: "蓝凯",
     color: "#002FA7",
     age: "200",
     gender: "中性",
@@ -13,7 +13,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
     hasGlitch: false,
   },
   white: {
-    name: "Data",
+    name: "素问",
     color: "#F0F0F0",
     age: "28",
     gender: "女性",
@@ -23,7 +23,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
     hasGlitch: false,
   },
   red: {
-    name: "Echo",
+    name: "沁沁",
     color: "#DC143C",
     age: "22",
     gender: "女性",
@@ -33,7 +33,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
     hasGlitch: false,
   },
   black: {
-    name: "Void",
+    name: "冷岩",
     color: "#1A1A1A",
     age: "45",
     gender: "男性",
@@ -43,7 +43,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
     hasGlitch: false,
   },
   yellow: {
-    name: "Solar",
+    name: "旭阳",
     color: "#FFD700",
     age: "18",
     gender: "男性",
@@ -53,7 +53,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
     hasGlitch: false,
   },
   green: {
-    name: "Flux",
+    name: "阿梦",
     color: "#39FF14",
     age: "随机",
     gender: "非二元",
