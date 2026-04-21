@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, useVideoConfig, spring, interpolate } from "remotion";
+import { AbsoluteFill, useVideoConfig, spring, interpolate, Img, staticFile } from "remotion";
 import { THEME } from "../tokens";
 import { useScale } from "../hooks/useScale";
 
@@ -37,35 +37,51 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
           zIndex: 1,
           textAlign: "center",
           padding: `0 ${s(100)}px`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: s(40),
         }}
       >
-        <h1
+        <Img
+          src={staticFile("/logo-generated.png")}
           style={{
-            color: "#fff",
-            fontSize: s(120),
-            fontWeight: 900,
-            margin: 0,
-            letterSpacing: s(10),
-            textTransform: "uppercase",
-            textShadow: `0 0 ${s(20)}px ${THEME.accentBlue}, 0 0 ${s(40)}px ${THEME.accentBlue}66`,
-            fontFamily: "Outfit, sans-serif",
-            lineHeight: 1,
-            background: `linear-gradient(to bottom, #fff 40%, ${THEME.accentBlue} 100%)`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            filter: "drop-shadow(0 5px 15px rgba(0,0,0,0.5))",
-          }}
-        >
-          {title}
-        </h1>
-        <div
-          style={{
-            marginTop: s(20),
-            height: s(4),
-            width: "100%",
-            background: `linear-gradient(to right, transparent, ${THEME.accentBlue}, transparent)`,
+            width: s(200),
+            height: s(200),
+            borderRadius: "50%",
+            boxShadow: `0 0 ${s(30)}px ${THEME.accentBlue}88`,
+            filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.5))",
           }}
         />
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <h1
+            style={{
+              color: "#fff",
+              fontSize: s(120),
+              fontWeight: 900,
+              margin: 0,
+              letterSpacing: s(10),
+              textTransform: "uppercase",
+              textShadow: `0 0 ${s(20)}px ${THEME.accentBlue}, 0 0 ${s(40)}px ${THEME.accentBlue}66`,
+              fontFamily: "Outfit, sans-serif",
+              lineHeight: 1,
+              background: `linear-gradient(to bottom, #fff 40%, ${THEME.accentBlue} 100%)`,
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              filter: "drop-shadow(0 5px 15px rgba(0,0,0,0.5))",
+            }}
+          >
+            {title}
+          </h1>
+          <div
+            style={{
+              marginTop: s(20),
+              height: s(4),
+              width: "100%",
+              background: `linear-gradient(to right, transparent, ${THEME.accentBlue}, transparent)`,
+            }}
+          />
+        </div>
       </div>
     </AbsoluteFill>
   );

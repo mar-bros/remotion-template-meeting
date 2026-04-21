@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill } from "remotion";
+import { AbsoluteFill, Img, staticFile } from "remotion";
 import { THEME } from "../tokens";
 import { useScale } from "../hooks/useScale";
 
@@ -41,10 +41,23 @@ export const OutroSlide: React.FC<OutroSlideProps> = ({
           flexDirection: "column",
           gap: s(40),
           backdropFilter: "blur(10px)",
+          alignItems: "center",
         }}
       >
+        <Img
+          src={staticFile("/logo-generated.png")}
+          style={{
+            width: s(120),
+            height: s(120),
+            borderRadius: "50%",
+            boxShadow: `0 0 ${s(20)}px ${THEME.accentBlue}66`,
+            filter: "drop-shadow(0 5px 10px rgba(0,0,0,0.5))",
+            marginBottom: s(10),
+          }}
+        />
+
         {/* Character Traits Section */}
-        <div>
+        <div style={{ width: "100%" }}>
           <div style={{ color: THEME.accentBlue, fontSize: s(20), fontWeight: 700, marginBottom: s(10), textTransform: "uppercase", letterSpacing: 2 }}>
             人格矩阵 / Character Protocol
           </div>
