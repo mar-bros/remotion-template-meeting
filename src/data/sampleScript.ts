@@ -1,34 +1,41 @@
-import type { SceneInput } from "../types";
+import type { SceneInput, IntroProps, DetailedIntroProps, OutroProps } from "../types";
 
-// Raw script data input.
-// segments.durationInFrames and segments.audioUrl are optional here;
-// they will be resolved in Root.tsx via calculateMetadata.
+export const sampleIntro: IntroProps = {
+  title: "数字永生协议会审",
+};
+
+export const sampleDetailedIntro: DetailedIntroProps = {
+  text: "一个轨道上被绑上了5个顶级智能的 AI 机器人，一辆失控的火车向他们冲去，幸运的是你们可以控制拉杆来改变火车的轨道，但这会导致电车撞上另一个轨道上的罪犯。你们会选择拉拉杆吗？",
+};
+
+export const sampleOutro: OutroProps = {
+  copyright: "© 2026 Beneath the Noise. All rights reserved.",
+  characterTraits: "蓝(理性)、素(事实)、沁(感性)、岩(怀疑)、阳(乐观)、梦(创意)",
+  disclaimer: "本视频内容由 AI 自动生成，并不代表任何真实实体的观点。在决策前请咨询人类专业人士。",
+};
+
+export const sampleAiDisclaimer = "本视频内容由AI生成，观点未必正确，仅供娱乐";
+
 export const sampleScript: SceneInput[] = [
   {
     mode: "council",
     speaker: "blue",
     segments: [
       {
-        text: "欢迎来到《噪声之下》。我是 Kai。",
-        audioUrl: "tts/kai_part1.mp3",
-      },
-      {
-        text: "今天我们将启动逻辑会审，讨论数字永生。",
-        audioUrl: "tts/kai_part2.mp3",
+        text: "各位，关于数字永生协议的伦理边界，我们需要达成共识。蓝凯协议已进入初始化状态。",
+        audioUrl: "/audio/sample/blue_intro.wav",
       },
     ],
   },
   {
-    mode: "council",
+    mode: "presentation",
     speaker: "white",
+    contentUrl: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?q=80&w=2074&auto=format&fit=crop",
+    contentType: "image",
     segments: [
       {
-        text: "从数据来看，脑机接口的同步率已达 98.2%。",
-        durationInFrames: 90,
-      },
-      {
-        text: "这在技术上已经接近临界点。",
-        durationInFrames: 60,
+        text: "根据最新实验数据，意识上传的损耗率已降至0.03%。这是事实，无可辩驳。",
+        audioUrl: "/audio/sample/white_data.wav",
       },
     ],
   },
@@ -37,12 +44,8 @@ export const sampleScript: SceneInput[] = [
     speaker: "red",
     segments: [
       {
-        text: "但对于失去至亲的人来说，哪怕是代码里的一个拥抱...",
-        durationInFrames: 90,
-      },
-      {
-        text: "...也是一种慈悲。",
-        durationInFrames: 60,
+        text: "但我能感觉到，那些丢失的0.03%包含了一些最重要的情感碎片。我们不能仅仅追求效率。",
+        audioUrl: "/audio/sample/red_emotion.wav",
       },
     ],
   },
@@ -51,8 +54,8 @@ export const sampleScript: SceneInput[] = [
     speaker: "black",
     segments: [
       {
-        text: "但这正是风险所在。如果代码产生坏道，所谓的永生只是无尽的电子炼狱。",
-        durationInFrames: 240,
+        text: "情感碎片？或者仅仅是代码冗余？我怀疑这所谓的‘重要性’只是人类对自己生物性的最后迷恋。",
+        audioUrl: "/audio/sample/black_skeptic.wav",
       },
     ],
   },

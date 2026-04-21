@@ -8,6 +8,9 @@ import { CouncilLayout } from "./components/CouncilLayout";
 import { PresentationLayout } from "./components/PresentationLayout";
 import { Subtitles } from "./components/Subtitles";
 import { useScale } from "./hooks/useScale";
+import { IntroSlide } from "./components/IntroSlide";
+import { DetailedIntroSlide } from "./components/DetailedIntroSlide";
+import { OutroSlide } from "./components/OutroSlide";
 
 // ─── Layout Registry ──────────────────────────────────────────────────────────
 
@@ -21,6 +24,10 @@ const LAYOUTS: Record<string, React.FC<LayoutProps>> = {
 export const KaiCore: React.FC<KaiCoreProps> = ({
   scenes,
   title = "会审记录",
+  intro,
+  detailedIntro,
+  outro,
+  aiDisclaimer,
 }) => {
   const { width, height } = useVideoConfig();
   const { s } = useScale();
@@ -73,105 +80,159 @@ export const KaiCore: React.FC<KaiCoreProps> = ({
         paddingBottom: isVertical ? "15%" : 0, // Safe area for Shorts/TikTok
       }}
     >
-      {/* Background Desktop */}
-      <AbsoluteFill>
-        <Img
-          src={THEME.desktopBg}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            opacity: 0.6,
-          }}
-        />
-      </AbsoluteFill>
+      <Series>
+        {/* 1. Intro Slide */}
+        {intro && (
+          <Series.Sequence durationInFrames={intro.durationInFrames || 6}>
+            <IntroSlide title={intro.title} />
+          </Series.Sequence>
+        )}
 
-      {/* Main Orchestrator: Space-balanced layout */}
-      <div
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <Series>
-          {scenes.map((scene, index) => {
-            const LayoutComponent = LAYOUTS[scene.mode];
-            if (!LayoutComponent) {
-              console.warn(`Unknown layout mode: ${scene.mode}`);
-              return null;
-            }
+        {/* 2. Detailed Intro Slide */}
+        {detailedIntro && (
+          <Series.Sequence durationInFrames={detailedIntro.durationInFrames || 150}>
+            <DetailedIntroSlide
+              text={detailedIntro.text}
+              audioUrl={detailedIntro.audioUrl}
+              durationInFrames={detailedIntro.durationInFrames || 150}
+              postWaitDurationInFrames={detailedIntro.postWaitDurationInFrames}
+            />
+          </Series.Sequence>
+        )}
 
-            return (
-              <Series.Sequence
-                key={index}
-                durationInFrames={scene.durationInFrames}
-              >
-                {/* Audio sequencing: only render sequences for segments with audio */}
-                {(() => {
-                  let offset = 0;
-                  return scene.segments.map((segment, sIndex) => {
-                    const currentOffset = offset;
-                    offset += segment.durationInFrames;
-                    if (!segment.audioUrl) return null;
-                    return (
-                      <Sequence
-                        key={`audio-${sIndex}`}
-                        from={currentOffset}
-                        durationInFrames={segment.durationInFrames}
-                        layout="none"
+        {/* 3. Main Scenes */}
+        <Series.Sequence durationInFrames={scenes.reduce((sum, s) => sum + s.durationInFrames, 0)}>
+          <AbsoluteFill>
+            {/* Background Desktop - Shared for all scenes */}
+            <Img
+              src={THEME.desktopBg}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.6,
+              }}
+            />
+
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <Series>
+                {scenes.map((scene, index) => {
+                  const LayoutComponent = LAYOUTS[scene.mode];
+                  if (!LayoutComponent) {
+                    console.warn(`Unknown layout mode: ${scene.mode}`);
+                    return null;
+                  }
+
+                  return (
+                    <Series.Sequence
+                      key={index}
+                      durationInFrames={scene.durationInFrames}
+                    >
+                      {/* Audio sequencing */}
+                      {(() => {
+                        let offset = 0;
+                        return scene.segments.map((segment, sIndex) => {
+                          const currentOffset = offset;
+                          offset += segment.durationInFrames;
+                          if (!segment.audioUrl) return null;
+                          return (
+                            <Sequence
+                              key={`audio-${sIndex}`}
+                              from={currentOffset}
+                              durationInFrames={segment.durationInFrames}
+                              layout="none"
+                            >
+                              <Audio src={staticFile(segment.audioUrl)} />
+                            </Sequence>
+                          );
+                        });
+                      })()}
+
+                      {/* Subtitle Area */}
+                      <AbsoluteFill style={{ zIndex: 100, pointerEvents: "none" }}>
+                        <Series>
+                          {scene.segments.map((segment, sIndex) => (
+                            <Series.Sequence
+                              key={sIndex}
+                              durationInFrames={segment.durationInFrames}
+                            >
+                              <Subtitles text={segment.text} speaker={scene.speaker} />
+                            </Series.Sequence>
+                          ))}
+                        </Series>
+                      </AbsoluteFill>
+
+                      {/* Window Area (Top 92%) */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          height: "92%",
+                          padding: s(10),
+                          zIndex: 10,
+                        }}
                       >
-                        <Audio src={staticFile(segment.audioUrl)} />
-                      </Sequence>
-                    );
-                  });
-                })()}
+                        <LayoutComponent
+                          speaker={scene.speaker}
+                          title={title}
+                          prevSpeakingFrames={sceneStats[index]}
+                          offlineStatus={offlineStatus}
+                          contentUrl={scene.contentUrl}
+                          contentType={scene.contentType}
+                          videoStartTime={videoStartTimes[index]}
+                        />
+                      </div>
+                    </Series.Sequence>
+                  );
+                })}
+              </Series>
 
-                {/* Subtitle Area — independent layer with stable z-index */}
-                <AbsoluteFill style={{ zIndex: 100, pointerEvents: "none" }}>
-                  <Series>
-                    {scene.segments.map((segment, sIndex) => (
-                      <Series.Sequence
-                        key={sIndex}
-                        durationInFrames={segment.durationInFrames}
-                      >
-                        <Subtitles text={segment.text} speaker={scene.speaker} />
-                      </Series.Sequence>
-                    ))}
-                  </Series>
-                </AbsoluteFill>
-
-                {/* Window Area (Top 92%) - Stays active for entire scene */}
+              {/* Global AI Disclaimer Footer - Absolute bottom of screen */}
+              {aiDisclaimer && (
                 <div
                   style={{
                     position: "absolute",
-                    top: 0,
+                    bottom: s(10),
                     left: 0,
                     right: 0,
-                    height: "92%",
-                    padding: s(10),
-                    zIndex: 10,
+                    textAlign: "center",
+                    fontSize: s(12),
+                    color: "rgba(255,255,255,0.15)", // Very subtle faint white
+                    zIndex: 1000,
+                    pointerEvents: "none",
+                    fontFamily: "Inter, sans-serif",
                   }}
                 >
-                  <LayoutComponent
-                    speaker={scene.speaker}
-                    title={title}
-                    prevSpeakingFrames={sceneStats[index]}
-                    offlineStatus={offlineStatus}
-                    contentUrl={scene.contentUrl}
-                    contentType={scene.contentType}
-                    videoStartTime={videoStartTimes[index]}
-                  />
+                  {aiDisclaimer}
                 </div>
-              </Series.Sequence>
-            );
-          })}
-        </Series>
-      </div>
+              )}
+            </div>
+          </AbsoluteFill>
+        </Series.Sequence>
+
+        {/* 4. Outro Slide */}
+        {outro && (
+          <Series.Sequence durationInFrames={outro.durationInFrames || 150}>
+            <OutroSlide
+              copyright={outro.copyright}
+              characterTraits={outro.characterTraits}
+              disclaimer={outro.disclaimer}
+            />
+          </Series.Sequence>
+        )}
+      </Series>
     </AbsoluteFill>
   );
 };

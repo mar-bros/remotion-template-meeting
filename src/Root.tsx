@@ -1,15 +1,27 @@
 import "./index.css";
+import React from "react";
 import { Composition, getInputProps, staticFile } from "remotion";
 import { getAudioDurationInSeconds } from "@remotion/media-utils";
 import { KaiCore } from "./KaiCore";
-import { sampleScript } from "./data/sampleScript";
-import type { SceneInput, DialogueSegment, Scene } from "./types";
+import { 
+  sampleScript, 
+  sampleIntro, 
+  sampleDetailedIntro, 
+  sampleOutro, 
+  sampleAiDisclaimer 
+} from "./data/sampleScript";
+import type { SceneInput, DialogueSegment, Scene, DetailedIntroProps } from "./types";
 import { KaiCoreSchema } from "./types";
 
 export const RemotionRoot: React.FC = () => {
-  const inputProps = getInputProps();
+    const inputProps = getInputProps();
   const rawScenes = (inputProps.scenes as SceneInput[] | undefined) || sampleScript;
   const title = (inputProps.title as string) || "数字永生协议会审";
+  const intro = inputProps.intro || sampleIntro;
+  const detailedIntro = inputProps.detailedIntro || sampleDetailedIntro;
+  const outro = inputProps.outro || sampleOutro;
+  const aiDisclaimer = inputProps.aiDisclaimer as string || sampleAiDisclaimer;
+  
   const fps = 30;
 
   return (
@@ -27,7 +39,39 @@ export const RemotionRoot: React.FC = () => {
           const resolvedScenes: Scene[] = [];
           let totalDuration = 0;
 
-          // Parallel: resolve all audio durations at once
+          // 1. Calculate Intro Duration
+          let introDuration = 0;
+          if (props.intro) {
+            introDuration = props.intro.durationInFrames || 6; // 0.2s default
+          }
+          totalDuration += introDuration;
+
+          // 2. Calculate Detailed Intro Duration
+          let detailedIntroDuration = 0;
+          if (props.detailedIntro) {
+            const di = props.detailedIntro as DetailedIntroProps;
+            if (di.durationInFrames) {
+              detailedIntroDuration = di.durationInFrames;
+            } else if (di.audioUrl) {
+              try {
+                const seconds = await getAudioDurationInSeconds(staticFile(di.audioUrl));
+                detailedIntroDuration = Math.ceil(seconds * fps);
+              } catch (e) {
+                detailedIntroDuration = 150; // Fallback 5s
+              }
+            } else {
+              // Estimate based on text length + punctuation rhythm
+              const text = di.text || "";
+              const punctuationCount = (text.match(/[，。！？；]/g) || []).length;
+              const baseSpeed = 2; // Increased speed (2 frames per char instead of 4)
+              const typingDuration = (text.length * baseSpeed) + (punctuationCount * 5);
+              const postWait = di.postWaitDurationInFrames ?? 60; // Default 2s (60 frames)
+              detailedIntroDuration = Math.min(300, typingDuration + postWait); // Capped at 10s (300 frames)
+            }
+          }
+          totalDuration += detailedIntroDuration;
+
+          // 3. Main Scenes Duration
           const allSegmentDurations: Promise<number>[] = [];
           const segmentMap: { sceneIdx: number; segIdx: number }[] = [];
 
@@ -89,17 +133,32 @@ export const RemotionRoot: React.FC = () => {
             totalDuration += sceneDuration;
           }
 
+          // 4. Outro Duration
+          let outroDuration = 0;
+          if (props.outro) {
+            outroDuration = props.outro.durationInFrames || 150; // 5s default
+          }
+          totalDuration += outroDuration;
+
           return {
             durationInFrames: Math.max(1, totalDuration),
             props: {
               ...props,
               scenes: resolvedScenes,
+              // Pass down resolved durations
+              intro: props.intro ? { ...props.intro, durationInFrames: introDuration } : undefined,
+              detailedIntro: props.detailedIntro ? { ...props.detailedIntro, durationInFrames: detailedIntroDuration } : undefined,
+              outro: props.outro ? { ...props.outro, durationInFrames: outroDuration } : undefined,
             },
           };
         }}
         defaultProps={{
           scenes: rawScenes as unknown as Scene[], // Schema handles validation at boundary
           title,
+          intro,
+          detailedIntro,
+          outro,
+          aiDisclaimer,
         }}
       />
     </>

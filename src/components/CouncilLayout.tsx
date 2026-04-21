@@ -35,37 +35,48 @@ export const CouncilLayout: React.FC<LayoutProps> = ({
       >
         <div
           style={{
-            padding: `${padding}px`,
-            display: "grid",
-            gridTemplateColumns: `repeat(${cols}, 1fr)`,
-            gridTemplateRows: `repeat(${rows}, 1fr)`,
-            gap: `${gap}px`,
+            display: "flex",
+            flexDirection: "column",
             width: "100%",
             height: "100%",
             backgroundColor: "rgba(0,0,0,0.5)",
           }}
         >
-          {PROTOCOL_KEYS.map((p) => (
-            <div
-              key={p}
-              style={{
-                border: `${s(2)}px solid ${speaker === p ? PROTOCOLS[p].color : "rgba(255,255,255,0.05)"}`,
-                borderRadius: s(8),
-                overflow: "hidden",
-                backgroundColor:
-                  speaker === p ? "rgba(255,255,255,0.03)" : "transparent",
-              }}
-            >
-              <Avatar
-                protocol={p}
-                isSpeaking={speaker === p}
-                isOffline={offlineStatus[p]}
-                speakingFrame={
-                  prevSpeakingFrames[p] + (speaker === p ? frame : 0)
-                }
-              />
-            </div>
-          ))}
+          <div
+            style={{
+              padding: `${padding}px`,
+              display: "grid",
+              gridTemplateColumns: `repeat(${cols}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, 1fr)`,
+              gap: `${gap}px`,
+              width: "100%",
+              flex: 1,
+              overflow: "hidden",
+            }}
+          >
+            {PROTOCOL_KEYS.map((p) => (
+              <div
+                key={p}
+                style={{
+                  border: `${s(2)}px solid ${speaker === p ? PROTOCOLS[p].color : "rgba(255,255,255,0.05)"}`,
+                  borderRadius: s(8),
+                  overflow: "hidden",
+                  backgroundColor:
+                    speaker === p ? "rgba(255,255,255,0.03)" : "transparent",
+                }}
+              >
+                <Avatar
+                  protocol={p}
+                  isSpeaking={speaker === p}
+                  isOffline={offlineStatus[p]}
+                  speakingFrame={
+                    prevSpeakingFrames[p] + (speaker === p ? frame : 0)
+                  }
+                />
+              </div>
+            ))}
+          </div>
+
         </div>
       </Window>
     </div>

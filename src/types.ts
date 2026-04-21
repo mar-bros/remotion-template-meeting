@@ -57,11 +57,36 @@ export interface Scene {
   contentType?: "image" | "video";
 }
 
+// ─── Special Slide Types ──────────────────────────────────────────────────
+
+export interface IntroProps {
+  title: string;
+  durationInFrames?: number;
+}
+
+export interface DetailedIntroProps {
+  text: string;
+  audioUrl?: string;
+  durationInFrames?: number;
+  postWaitDurationInFrames?: number;
+}
+
+export interface OutroProps {
+  copyright: string;
+  characterTraits: string;
+  disclaimer: string;
+  durationInFrames?: number;
+}
+
 // ─── Component Props ─────────────────────────────────────────────────────────
 
 export interface KaiCoreProps {
   scenes: Scene[];
   title?: string;
+  intro?: IntroProps;
+  detailedIntro?: DetailedIntroProps;
+  outro?: OutroProps;
+  aiDisclaimer?: string;
 }
 
 export interface LayoutProps {
@@ -90,7 +115,30 @@ const SceneInputSchema = z.object({
   contentType: z.enum(["image", "video"]).optional(),
 });
 
+const IntroSchema = z.object({
+  title: z.string(),
+  durationInFrames: z.number().optional(),
+});
+
+const DetailedIntroSchema = z.object({
+  text: z.string(),
+  audioUrl: z.string().optional(),
+  durationInFrames: z.number().optional(),
+  postWaitDurationInFrames: z.number().optional(),
+});
+
+const OutroSchema = z.object({
+  copyright: z.string(),
+  characterTraits: z.string(),
+  disclaimer: z.string(),
+  durationInFrames: z.number().optional(),
+});
+
 export const KaiCoreSchema = z.object({
   scenes: z.array(SceneInputSchema),
   title: z.string().optional(),
+  intro: IntroSchema.optional(),
+  detailedIntro: DetailedIntroSchema.optional(),
+  outro: OutroSchema.optional(),
+  aiDisclaimer: z.string().optional(),
 });
