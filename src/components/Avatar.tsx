@@ -1,4 +1,5 @@
-import { Freeze, Img, Sequence, Video, interpolate, useCurrentFrame } from "remotion";
+import { Freeze, Img, Sequence, interpolate, useCurrentFrame } from "remotion";
+import { Video } from "@remotion/media";
 import { useScale } from "../hooks/useScale";
 import { PROTOCOLS } from "../tokens";
 import type { ProtocolType } from "../types";
@@ -48,10 +49,12 @@ export const Avatar: React.FC<AvatarProps> = ({
     : "";
 
   const videoStyle = {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
     borderRadius: "50%",
-    objectFit: "cover" as const,
     filter: isOffline ? "grayscale(1) brightness(0.4)" : "none",
   };
 
@@ -78,7 +81,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           borderRadius: "50%",
           border: `${s(isSmall ? 2 : 4)}px solid ${borderColor}`,
           transform: `scale(${pulseScale}) ${glitchTransform}`,
-          padding: s(5),
+          padding: 0,
           boxShadow:
             isSpeaking && !isVideo
               ? `0 0 ${s(30)}px ${data.color}88`
@@ -92,12 +95,26 @@ export const Avatar: React.FC<AvatarProps> = ({
         {isVideo ? (
           isSpeaking ? (
             <Sequence from={-videoOffset} layout="none">
-              <Video src={data.avatar} muted loop style={videoStyle} />
+              <Video
+                src={data.avatar}
+                muted
+                loop
+                objectFit="cover"
+                style={videoStyle}
+                delayRenderTimeoutInMilliseconds={100000}
+              />
             </Sequence>
           ) : (
             <Sequence from={-videoOffset} layout="none">
               <Freeze frame={videoOffset}>
-                <Video src={data.avatar} muted loop style={videoStyle} />
+                <Video
+                  src={data.avatar}
+                  muted
+                  loop
+                  objectFit="cover"
+                  style={videoStyle}
+                  delayRenderTimeoutInMilliseconds={100000}
+                />
               </Freeze>
             </Sequence>
           )

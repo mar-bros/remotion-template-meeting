@@ -1,5 +1,6 @@
 import React from "react";
-import { Img, Video, useCurrentFrame } from "remotion";
+import { Img, useCurrentFrame } from "remotion";
+import { Video } from "@remotion/media";
 import { useScale } from "../hooks/useScale";
 import { PROTOCOLS, PROTOCOL_KEYS, THEME } from "../tokens";
 import type { LayoutProps } from "../types";
@@ -53,14 +54,14 @@ export const PresentationLayout: React.FC<LayoutProps> = ({
             {contentUrl ? (
               contentType === "video" ? (
                 <>
-                  {/* eslint-disable-next-line @remotion/no-object-fit-on-media-video */}
                   <Video
                     src={contentUrl}
-                    startFrom={videoStartTime}
+                    trimBefore={videoStartTime}
+                    objectFit="cover"
+                    delayRenderTimeoutInMilliseconds={100000}
                     style={{
                       width: "100%",
                       height: "100%",
-                      objectFit: "cover",
                     }}
                   />
                 </>

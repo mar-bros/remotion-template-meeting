@@ -1,6 +1,7 @@
 import React from "react";
 import { staticFile } from "remotion";
-import { AbsoluteFill, Audio, Img, Sequence, Series, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, Sequence, Series, useVideoConfig } from "remotion";
+import { Audio } from "@remotion/media";
 import { THEME, PROTOCOL_KEYS } from "./tokens";
 import type { KaiCoreProps, LayoutProps } from "./types";
 import { CouncilLayout } from "./components/CouncilLayout";
