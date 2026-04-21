@@ -3,25 +3,25 @@ import React from "react";
 import { Composition, getInputProps, staticFile } from "remotion";
 import { getAudioDurationInSeconds } from "@remotion/media-utils";
 import { KaiCore } from "./KaiCore";
-import { 
-  sampleScript, 
-  sampleIntro, 
-  sampleDetailedIntro, 
-  sampleOutro, 
-  sampleAiDisclaimer 
+import {
+  sampleScript,
+  sampleIntro,
+  sampleDetailedIntro,
+  sampleOutro,
+  sampleAiDisclaimer
 } from "./data/sampleScript";
 import type { SceneInput, DialogueSegment, Scene, DetailedIntroProps } from "./types";
 import { KaiCoreSchema } from "./types";
 
 export const RemotionRoot: React.FC = () => {
-    const inputProps = getInputProps();
+  const inputProps = getInputProps();
   const rawScenes = (inputProps.scenes as SceneInput[] | undefined) || sampleScript;
-  const title = (inputProps.title as string) || "数字永生协议会审";
   const intro = inputProps.intro || sampleIntro;
+  const title = (inputProps.title as string) || intro?.title || "会审记录";
   const detailedIntro = inputProps.detailedIntro || sampleDetailedIntro;
   const outro = inputProps.outro || sampleOutro;
   const aiDisclaimer = inputProps.aiDisclaimer as string || sampleAiDisclaimer;
-  
+
   const fps = 30;
 
   return (

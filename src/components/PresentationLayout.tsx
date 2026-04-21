@@ -28,7 +28,7 @@ export const PresentationLayout: React.FC<LayoutProps> = ({
       }}
     >
       <Window
-        title={`噪声之下 - ${title} / 协作模式`}
+        title={`${THEME.brandName} - ${title} / 协作模式`}
         style={{ width: "100%", height: "100%" }}
       >
         <div

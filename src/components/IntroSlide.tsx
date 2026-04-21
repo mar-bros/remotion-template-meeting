@@ -40,28 +40,30 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: s(40),
+          gap: s(60), // Increased overall gap
         }}
       >
         <Img
           src={staticFile("/logo-generated.png")}
           style={{
-            width: s(200),
-            height: s(200),
+            width: s(220), // Slightly larger logo
+            height: s(220),
             borderRadius: "50%",
-            boxShadow: `0 0 ${s(30)}px ${THEME.accentBlue}88`,
+            boxShadow: `0 0 ${s(40)}px ${THEME.accentBlue}66`,
             filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.5))",
+            marginTop: s(-100), // Moved UP by offsetting
           }}
         />
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
           <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: s(5) }}>
+            {/* ... title mapping remains same ... */}
             {title.split("").map((char, i) => {
               // 6 Safe, vibrant theme colors corresponding to the hats
               const SAFE_COLORS = [
                 "#2e86de", // Blue
                 "#f5f6fa", // White
                 "#ff5252", // Red
-                "#a4b0be", // Grey (Black hat substitute)
+                "#57606f", // Grey
                 "#feca57", // Yellow
                 "#1dd1a1", // Green
               ];
@@ -120,13 +122,34 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
           </div>
           <div
             style={{
-              marginTop: s(40),
-              height: s(6),
-              width: "80%",
-              background: `linear-gradient(to right, transparent, #fff, transparent)`,
-              opacity: 0.5,
+              marginTop: s(100), // Increased spacing between title and brand line
+              height: s(4), 
+              width: "90%",
+              background: `linear-gradient(to right, transparent, #2e86de, #f5f6fa, #ff5252, #57606f, #feca57, #1dd1a1, transparent)`,
+              opacity: 0.8,
+              position: "relative",
             }}
-          />
+          >
+            <div
+              style={{
+                position: "absolute",
+                top: s(60), // Moved Brand name FURTHER down from the line
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: "100%",
+                textAlign: "center",
+                color: "rgba(255,255,255,0.6)",
+                fontSize: s(36),
+                fontWeight: 700,
+                letterSpacing: s(30),
+                textTransform: "uppercase",
+                fontFamily: "Outfit, sans-serif",
+                textShadow: "0 0 20px rgba(0,0,0,0.5)",
+              }}
+            >
+              {THEME.brandName}
+            </div>
+          </div>
         </div>
       </div>
     </AbsoluteFill>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
 import { useScale } from "../hooks/useScale";
-import { PROTOCOLS, PROTOCOL_KEYS } from "../tokens";
+import { PROTOCOLS, PROTOCOL_KEYS, THEME } from "../tokens";
 import type { LayoutProps } from "../types";
 import { Window } from "./Window";
 import { Avatar } from "./Avatar";
@@ -30,7 +30,7 @@ export const CouncilLayout: React.FC<LayoutProps> = ({
       }}
     >
       <Window
-        title={`噪声之下 - ${title}`}
+        title={`${THEME.brandName} - ${title}`}
         style={{ width: "100%", height: "100%" }}
       >
         <div
