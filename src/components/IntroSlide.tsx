@@ -1,11 +1,13 @@
 import React from "react";
-import { AbsoluteFill, useVideoConfig, spring, interpolate, Img, staticFile } from "remotion";
+import { AbsoluteFill, useVideoConfig, spring, interpolate, Img, staticFile, random } from "remotion";
 import { THEME } from "../tokens";
 import { useScale } from "../hooks/useScale";
 
 interface IntroSlideProps {
   title: string;
 }
+
+const SESSION_SEED = Math.random();
 
 export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
   const { s } = useScale();
@@ -147,7 +149,23 @@ export const IntroSlide: React.FC<IntroSlideProps> = ({ title }) => {
                 textShadow: "0 0 20px rgba(0,0,0,0.5)",
               }}
             >
-              {THEME.brandName}
+              {THEME.brandName.split("").map((char, i) => {
+                const SAFE_COLORS = [
+                  "#2e86de", // Blue
+                  "#f5f6fa", // White
+                  "#ff5252", // Red
+                  "#57606f", // Grey
+                  "#feca57", // Yellow
+                  "#1dd1a1", // Green
+                ];
+                // 每次刷新根据 SESSION_SEED 随机一个颜色组合，但在当前播放会话中保持静态
+                const colorIndex = Math.floor(random(`brandName-${SESSION_SEED}-${i}`) * SAFE_COLORS.length);
+                return (
+                  <span key={i} style={{ color: SAFE_COLORS[colorIndex] }}>
+                    {char}
+                  </span>
+                );
+              })}
             </div>
           </div>
         </div>
