@@ -1,4 +1,5 @@
 import type { SceneInput, IntroProps, DetailedIntroProps, OutroProps } from "../types";
+import { ActionFactory } from "./ActionFactory";
 
 export const sampleIntro: IntroProps = {
   title: "电车难题，AI 如何看？",
@@ -21,7 +22,12 @@ export const sampleScript: SceneInput[] = [{
   "speaker": "blue",
   "segments": [{
     "text": "(温和地) 其实啊，我刚才自个儿在那瞎琢磨了半天，",
-    "audioUrl": "tts/blue_part1_1.wav"
+    "audioUrl": "tts/blue_part1_1.wav",
+    "agentStates": ActionFactory.combine({
+      "white": ActionFactory.offline(),
+      "yellow": ActionFactory.happy("✨"),
+      "green": ActionFactory.whisperLeft()
+    })
   }, {
     "text": "这会儿更想听听大伙儿的直觉反应。  这个问题搁谁身上都挺拧巴的，",
     "audioUrl": "tts/blue_part1_2.wav"
@@ -33,10 +39,17 @@ export const sampleScript: SceneInput[] = [{
     "audioUrl": "tts/blue_part1_4.wav"
   }, {
     "text": "还是觉得那个罪犯的命也是命？这种道德直觉往往能照亮咱们平时忽略的角落。",
-    "audioUrl": "tts/blue_part1_5.wav"
+    "audioUrl": "tts/blue_part1_5.wav",
+    "agentStates": ActionFactory.combine({
+      "red": ActionFactory.whisperRight(),
+      "black": ActionFactory.whisperLeft()
+    })
   }, {
     "text": "沁沁，你头一个感觉是怎样的？",
-    "audioUrl": "tts/blue_part1_6.wav"
+    "audioUrl": "tts/blue_part1_6.wav",
+    "agentStates": ActionFactory.combine({
+      "red": ActionFactory.shocked("!?")
+    })
   }]
 }, {
   "mode": "council",
@@ -117,7 +130,10 @@ export const sampleScript: SceneInput[] = [{
   "speaker": "black",
   "segments": [{
     "text": "(沉重地) 其实吧，沁沁刚才那番话我听完了，",
-    "audioUrl": "tts/black_part4_1.wav"
+    "audioUrl": "tts/black_part4_1.wav",
+    "agentStates": ActionFactory.combine({
+      "black": ActionFactory.angry("💢")
+    })
   }, {
     "text": "心里头不是滋味儿。  她说的那些感受，咱能理解，",
     "audioUrl": "tts/black_part4_2.wav"
@@ -129,7 +145,10 @@ export const sampleScript: SceneInput[] = [{
     "audioUrl": "tts/black_part4_4.wav"
   }, {
     "text": "素问摆的那些数据，听着挺科学，可道德这事儿能用统计学算明白吗？",
-    "audioUrl": "tts/black_part4_5.wav"
+    "audioUrl": "tts/black_part4_5.wav",
+    "agentStates": ActionFactory.combine({
+      "white": ActionFactory.thinking("...")
+    })
   }, {
     "text": "风险就在这儿，咱要是跟着感觉走，或者跟着大数据走，",
     "audioUrl": "tts/black_part4_6.wav"
@@ -449,7 +468,6 @@ export const sampleScript: SceneInput[] = [{
     "audioUrl": "tts/blue_part12_5.wav"
   }, {
     "text": "旭阳算的是大账，觉得五个AI能造福的人更多；",
-    "audioUrl": "tts/blue_part12_6.wav"
   }, {
     "text": "阿梦呢，是想方设法不想做这道选择题；素问给咱划清了哪些是事实，",
     "audioUrl": "tts/blue_part12_7.wav"

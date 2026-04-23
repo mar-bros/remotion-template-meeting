@@ -192,6 +192,7 @@ export const KaiCore: React.FC<KaiCoreProps> = ({
                           contentUrl={scene.contentUrl}
                           contentType={scene.contentType}
                           videoStartTime={videoStartTimes[index]}
+                          segments={scene.segments}
                         />
                       </div>
                     </Series.Sequence>

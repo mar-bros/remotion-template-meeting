@@ -26,10 +26,18 @@ export interface ProtocolConfig {
 
 // ─── Scene / Dialogue Types (Input – before calculateMetadata) ────────────────
 
+export interface AgentAction {
+  emotion?: "happy" | "angry" | "thinking" | "sad" | "shocked" | "normal";
+  movement?: "whisper_left" | "whisper_right" | "nod" | "shake_head" | "look_around" | "idle";
+  floatingText?: string;
+  isOffline?: boolean;
+}
+
 export interface DialogueSegmentInput {
   text: string;
   audioUrl?: string;
   durationInFrames?: number; // Optional: resolved via audio duration or fallback
+  agentStates?: Partial<Record<ProtocolType, AgentAction>>;
 }
 
 export interface SceneInput {
@@ -46,6 +54,7 @@ export interface DialogueSegment {
   text: string;
   audioUrl?: string;
   durationInFrames: number; // Guaranteed after resolution
+  agentStates?: Partial<Record<ProtocolType, AgentAction>>;
 }
 
 export interface Scene {
@@ -97,14 +106,23 @@ export interface LayoutProps {
   contentUrl?: string;
   contentType?: "image" | "video";
   videoStartTime?: number;
+  segments?: DialogueSegment[];
 }
 
 // ─── Zod Schemas (for Remotion Studio & input validation) ─────────────────────
+
+const AgentActionSchema = z.object({
+  emotion: z.enum(["happy", "angry", "thinking", "sad", "shocked", "normal"]).optional(),
+  movement: z.enum(["whisper_left", "whisper_right", "nod", "shake_head", "look_around", "idle"]).optional(),
+  floatingText: z.string().optional(),
+  isOffline: z.boolean().optional(),
+});
 
 const DialogueSegmentInputSchema = z.object({
   text: z.string(),
   audioUrl: z.string().optional(),
   durationInFrames: z.number().optional(),
+  agentStates: z.record(z.enum(PROTOCOL_TYPE_VALUES), AgentActionSchema).optional(),
 });
 
 const SceneInputSchema = z.object({

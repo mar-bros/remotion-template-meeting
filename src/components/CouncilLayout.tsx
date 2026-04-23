@@ -11,6 +11,7 @@ export const CouncilLayout: React.FC<LayoutProps> = ({
   title = "逻辑会审",
   prevSpeakingFrames,
   offlineStatus,
+  segments,
 }) => {
   const frame = useCurrentFrame();
   const { s, isVertical } = useScale();
@@ -20,6 +21,23 @@ export const CouncilLayout: React.FC<LayoutProps> = ({
 
   const gap = s(10);
   const padding = s(20);
+
+  let currentSegmentIndex = 0;
+  let currentSegmentStartFrame = 0;
+  if (segments) {
+    let accFrames = 0;
+    for (let i = 0; i < segments.length; i++) {
+      if (frame >= accFrames && frame < accFrames + segments[i].durationInFrames) {
+        currentSegmentIndex = i;
+        currentSegmentStartFrame = accFrames;
+        break;
+      }
+      accFrames += segments[i].durationInFrames;
+    }
+  }
+
+  const activeSegment = segments?.[currentSegmentIndex];
+  const agentStates = activeSegment?.agentStates || {};
 
   return (
     <div
@@ -68,10 +86,13 @@ export const CouncilLayout: React.FC<LayoutProps> = ({
                 <Avatar
                   protocol={p}
                   isSpeaking={speaker === p}
-                  isOffline={offlineStatus[p]}
+                  isOffline={offlineStatus[p] || agentStates[p]?.isOffline}
                   speakingFrame={
                     prevSpeakingFrames[p] + (speaker === p ? frame : 0)
                   }
+                  action={agentStates[p]}
+                  audioUrl={speaker === p ? activeSegment?.audioUrl : undefined}
+                  segmentFrame={frame - currentSegmentStartFrame}
                 />
               </div>
             ))}

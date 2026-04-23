@@ -67,7 +67,7 @@ export const PROTOCOLS: Record<ProtocolType, ProtocolConfig> = {
 export const PROTOCOL_KEYS: ProtocolType[] = Object.keys(PROTOCOLS) as ProtocolType[];
 
 export const THEME = {
-  brandName: "硅基六觉",
+  brandName: "六点儿意思",
   background: "#0a0a0a",
   desktopBg: staticFile("/bg-desktop.png"),
   windowHeaderHeight: 50,
