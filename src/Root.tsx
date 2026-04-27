@@ -31,8 +31,8 @@ export const RemotionRoot: React.FC = () => {
         component={KaiCore as unknown as React.FC<Record<string, unknown>>}
         durationInFrames={1} // Placeholder, overridden by calculateMetadata
         fps={fps}
-        width={1280}
-        height={820}
+        width={1920}
+        height={1280}
         schema={KaiCoreSchema}
         calculateMetadata={async ({ props }) => {
           const scenes = props.scenes as SceneInput[];
